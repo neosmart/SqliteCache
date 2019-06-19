@@ -65,7 +65,7 @@ namespace NeoSmart.SqliteCache {
         ///	&quot;key&quot;	varchar NOT NULL,
         ///	&quot;value&quot;	BLOB,
         ///	&quot;expiry&quot;	INTEGER,
-        ///	&quot;expiry2&quot;	INTEGER,
+        ///	&quot;renewal&quot;	INTEGER,
         ///	PRIMARY KEY(&quot;key&quot;)
         ///) WITHOUT ROWID;
         ///
@@ -76,8 +76,7 @@ namespace NeoSmart.SqliteCache {
         ///) WITHOUT ROWID;
         ///
         ///CREATE INDEX &quot;cache_expiry&quot; ON &quot;cache&quot; (
-        ///	&quot;expiry&quot;,
-        ///	&quot;expiry2&quot;
+        ///	&quot;expiry&quot;
         ///).
         /// </summary>
         internal static string TableInitCommand {

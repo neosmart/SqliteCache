@@ -122,7 +122,7 @@
 	"key"	varchar NOT NULL,
 	"value"	BLOB,
 	"expiry"	INTEGER,
-	"expiry2"	INTEGER,
+	"renewal"	INTEGER,
 	PRIMARY KEY("key")
 ) WITHOUT ROWID;
 
@@ -133,8 +133,7 @@ CREATE TABLE "meta" (
 ) WITHOUT ROWID;
 
 CREATE INDEX "cache_expiry" ON "cache" (
-	"expiry",
-	"expiry2"
+	"expiry"
 )</value>
   </data>
 </root>

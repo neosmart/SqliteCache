@@ -208,7 +208,7 @@ namespace NeoSmart.SqliteCache
             cmd.Parameters.AddWithValue("@value", value);
 
             long? expiry = null;
-            long? expiry2 = null;
+            long? renewal = null;
 
             if (options.AbsoluteExpiration.HasValue)
             {
@@ -222,12 +222,12 @@ namespace NeoSmart.SqliteCache
             }
             else if (options.SlidingExpiration.HasValue)
             {
-                expiry = DateTimeOffset.UtcNow.Ticks;
-                expiry2 = options.SlidingExpiration.Value.Ticks;
+                renewal = options.SlidingExpiration.Value.Ticks;
+                expiry = DateTimeOffset.UtcNow.Ticks + renewal;
             }
 
             cmd.Parameters.AddWithValue("@expiry", (object) expiry ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@expiry2", (object) expiry2 ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@renewal", (object) renewal ?? DBNull.Value);
         }
 
         public void Set(string key, byte[] value, DistributedCacheEntryOptions options)

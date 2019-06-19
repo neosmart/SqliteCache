@@ -18,20 +18,16 @@ namespace NeoSmart.SqliteCache
         public readonly static int Count = Enum.GetValues(typeof(Operation)).Length;
 
         // We have two expiry fields, that can be considered a union of these
-        // two cases: (AbsoluteExpiry) and (LastTouch, Ttl)
-        const string NotExpiredClause =
-            "  (expiry IS NULL " +
-            "    OR (expiry2 IS NULL AND expiry >= @now) " +
-            "    OR (expiry + expiry2 >= @now)" +
-            "  )";
+        // two cases: (AbsoluteExpiry) and (NextExpiry, Ttl)
+        const string NotExpiredClause = " (expiry IS NULL OR expiry >= @now) ";
 
         static DbCommands()
         {
             Commands = new string[Count];
 
             Commands[(int) Operation.Insert] =
-                "INSERT OR REPLACE INTO cache (key, value, expiry, expiry2) " +
-                "VALUES (@key, @value, @expiry, @expiry2)";
+                "INSERT OR REPLACE INTO cache (key, value, expiry, renewal) " +
+                "VALUES (@key, @value, @expiry, @renewal)";
 
             Commands[(int) Operation.Get] =
                 "SELECT value FROM cache " +
