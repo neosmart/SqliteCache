@@ -1,4 +1,5 @@
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ namespace NeoSmart.Caching.Sqlite
     public class SqliteCacheOptions : IOptions<SqliteCacheOptions>
     {
         SqliteCacheOptions IOptions<SqliteCacheOptions>.Value => this;
+        public ILogger<SqliteCache> Logger { get; set; }
 
         /// <summary>
         /// Takes precedence over <see cref="CachePath"/>

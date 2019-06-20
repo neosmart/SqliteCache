@@ -28,8 +28,8 @@ namespace NeoSmart.Caching.Sqlite
             SQLitePCL.Batteries.Init();
         }
 
-        public SqliteCache(IOptions<SqliteCacheOptions> options, ILogger<SqliteCache> logger)
-            : this(options.Value, logger)
+        public SqliteCache(IOptions<SqliteCacheOptions> options)
+            : this(options.Value, options.Value.Logger)
         {
         }
 
