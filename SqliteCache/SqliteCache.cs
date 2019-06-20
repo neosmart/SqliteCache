@@ -20,6 +20,7 @@ namespace NeoSmart.Caching.Sqlite
         private readonly SqliteCacheOptions _config;
         private readonly ILogger _logger;
         private DbConnection _db;
+        private Timer _cleanupTimer;
 
         private DbCommandPool Commands { get; set; }
 
@@ -39,10 +40,21 @@ namespace NeoSmart.Caching.Sqlite
             _logger = logger;
 
             Connect();
+
+            // This has to be after the call to Connect()
+            if (_config.CleanupInterval.HasValue)
+            {
+                _cleanupTimer = new Timer(_ =>
+                {
+                    _logger.LogTrace("Beginning background cache cleanup");
+                    RemoveExpired();
+                }, null, TimeSpan.Zero, _config.CleanupInterval.Value);
+            }
         }
 
         public void Dispose()
         {
+            _cleanupTimer?.Dispose();
             Commands?.Dispose();
             _db?.Close();
             _db?.Dispose();
@@ -267,24 +279,34 @@ namespace NeoSmart.Caching.Sqlite
             });
         }
 
-        public async Task<byte[]> GetAsync(string key, CancellationToken token = default)
+        public async Task<byte[]> GetAsync(string key, CancellationToken cancel = default)
         {
             return (byte[]) await Commands.UseAsync(Operation.Get, cmd =>
             {
                 cmd.Parameters.AddWithValue("@key", key);
                 cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
-                return cmd.ExecuteScalarAsync();
+                return cmd.ExecuteScalarAsync(cancel);
             });
         }
 
         public void Refresh(string key)
         {
-            throw new NotImplementedException();
+            Commands.Use(Operation.Refresh, cmd =>
+            {
+                cmd.Parameters.AddWithValue("@key", key);
+                cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
+                return cmd.ExecuteScalar();
+            });
         }
 
         public Task RefreshAsync(string key, CancellationToken cancel = default)
         {
-            throw new NotImplementedException();
+            return Commands.UseAsync(Operation.Refresh, cmd =>
+            {
+                cmd.Parameters.AddWithValue("@key", key);
+                cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
+                return cmd.ExecuteScalarAsync(cancel);
+            });
         }
 
         public void Remove(string key)
@@ -350,6 +372,34 @@ namespace NeoSmart.Caching.Sqlite
                 CreateForSet(cmd, key, value, options);
                 return cmd.ExecuteNonQueryAsync(cancel);
             });
+        }
+
+        public void RemoveExpired()
+        {
+            var removed = Commands.Use(Operation.RemoveExpired, cmd =>
+            {
+                cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
+                return (long)cmd.ExecuteScalar();
+            });
+
+            if (removed > 0)
+            {
+                _logger.LogDebug("Evicted {DeletedCacheEntryCount} expired entries from cache", removed);
+            }
+        }
+
+        public async Task RemoveExpiredAsync(CancellationToken cancel = default)
+        {
+            var removed = (long) await Commands.UseAsync(Operation.RemoveExpired, cmd =>
+            {
+                cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
+                return cmd.ExecuteScalarAsync(cancel);
+            });
+
+            if (removed > 0)
+            {
+                _logger.LogDebug("Evicted {DeletedCacheEntryCount} expired entries from cache", removed);
+            }
         }
     }
 }

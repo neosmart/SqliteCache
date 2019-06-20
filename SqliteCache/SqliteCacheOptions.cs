@@ -22,6 +22,8 @@ namespace NeoSmart.Caching.Sqlite
         /// </summary>
         public string CachePath { get; set; } = "SqliteCache.db";
 
+        public TimeSpan? CleanupInterval { get; set; } = TimeSpan.FromMinutes(30);
+
         internal string ConnectionString
         {
             get

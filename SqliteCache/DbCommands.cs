@@ -9,7 +9,8 @@ namespace NeoSmart.Caching.Sqlite
         Insert,
         Remove,
         RemoveExpired,
-        Get
+        Get,
+        Refresh,
     }
 
     static class DbCommands
@@ -29,12 +30,7 @@ namespace NeoSmart.Caching.Sqlite
                 "INSERT OR REPLACE INTO cache (key, value, expiry, renewal) " +
                 "VALUES (@key, @value, @expiry, @renewal)";
 
-            Commands[(int)Operation.Get] =
-                // Get an unexpired item from the cache
-                $"SELECT value FROM cache " +
-                $"  WHERE key = @key " +
-                $"  AND {NotExpiredClause};" +
-                // And update the expiry if it is unexpired and has a renewal
+            Commands[(int)Operation.Refresh] =
                 $"UPDATE cache " +
                 $"SET expiry = (@now + renewal) " +
                 $"WHERE " +
@@ -42,13 +38,22 @@ namespace NeoSmart.Caching.Sqlite
                 $"  AND expiry >= @now " +
                 $"  AND renewal IS NOT NULL;";
 
+            Commands[(int)Operation.Get] =
+                // Get an unexpired item from the cache
+                $"SELECT value FROM cache " +
+                $"  WHERE key = @key " +
+                $"  AND {NotExpiredClause};" +
+                // And update the expiry if it is unexpired and has a renewal
+                Commands[(int)Operation.Refresh];
+
             Commands[(int)Operation.Remove] =
                 "DELETE FROM cache " +
                 "  WHERE key = @key";
 
             Commands[(int)Operation.RemoveExpired] =
                 "DELETE FROM cache " +
-                $"  WHERE NOT {NotExpiredClause}";
+                $"  WHERE NOT {NotExpiredClause};" +
+                $"SELECT CHANGES();";
         }
     }
 }
