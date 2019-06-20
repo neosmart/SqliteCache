@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NeoSmart.SqliteCache
+namespace NeoSmart.Caching.Sqlite
 {
     enum Operation
     {

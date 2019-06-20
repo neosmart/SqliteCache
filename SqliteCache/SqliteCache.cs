@@ -11,7 +11,7 @@ using DbConnection = Microsoft.Data.Sqlite.SqliteConnection;
 using DbCommand = Microsoft.Data.Sqlite.SqliteCommand;
 using DbDataReader = Microsoft.Data.Sqlite.SqliteDataReader;
 
-namespace NeoSmart.SqliteCache
+namespace NeoSmart.Caching.Sqlite
 {
     public class SqliteCache : IDistributedCache, IDisposable
     {

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LazyCommand = System.Lazy<Microsoft.Data.Sqlite.SqliteCommand>;
 
-namespace NeoSmart.SqliteCache
+namespace NeoSmart.Caching.Sqlite
 {
     class DbCommandPool : IDisposable
     {

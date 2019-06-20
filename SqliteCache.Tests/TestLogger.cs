@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NeoSmart.SqliteCache.Tests
+namespace NeoSmart.Caching.Sqlite.Tests
 {
     class TestLogger<T> : ILogger<T>
     {

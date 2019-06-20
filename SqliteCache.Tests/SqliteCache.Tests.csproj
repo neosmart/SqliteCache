@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <AssemblyName>NeoSmart.Caching.Sqlite.Tests</AssemblyName>
+
+    <RootNamespace>NeoSmart.Caching.Sqlite.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

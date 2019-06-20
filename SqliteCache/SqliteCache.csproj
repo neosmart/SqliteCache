@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>NeoSmart.SqliteCache</AssemblyName>
-    <RootNamespace>NeoSmart.SqliteCache</RootNamespace>
+    <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
+    <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,13 +1,11 @@
-using global::NeoSmart.SqliteCache;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace NeoSmart.SqliteCache.Tests
+namespace NeoSmart.Caching.Sqlite.Tests
 {
-
     [TestClass]
     public class SqliteCacheTests
     {
