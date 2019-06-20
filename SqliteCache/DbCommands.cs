@@ -29,11 +29,20 @@ namespace NeoSmart.Caching.Sqlite
                 "INSERT OR REPLACE INTO cache (key, value, expiry, renewal) " +
                 "VALUES (@key, @value, @expiry, @renewal)";
 
-            Commands[(int) Operation.Get] =
-                "SELECT value FROM cache " +
-                "  WHERE key = @key " +
+            Commands[(int)Operation.Get] =
+                // Get an unexpired item from the cache
+                $"SELECT value FROM cache " +
+                $"  WHERE key = @key " +
                 $"  AND {NotExpiredClause} " +
-                $"LIMIT 1";
+                $"LIMIT 1;" +
+                // And update the expiry if it is unexpired and has a renewal
+                $"UPDATE cache " +
+                $"SET expiry = @now + renewal " +
+                $"WHERE " +
+                $"  key = @key " +
+                $"  AND expiry >= @now " +
+                $"  AND renewal IS NOT NULL " +
+                $"LIMIT 1;";
 
             Commands[(int) Operation.Remove] =
                 "DELETE FROM cache " +
