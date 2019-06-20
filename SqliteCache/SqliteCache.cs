@@ -103,7 +103,7 @@ namespace NeoSmart.Caching.Sqlite
             if (_db == null)
             {
                 var connectionString = _config.ConnectionString;
-                _logger.LogDebug("Opening connection to SQLite database: " +
+                _logger.LogTrace("Opening connection to SQLite database: " +
                     "{ConnectionString}", connectionString);
 
                 // First try to open an existing database
@@ -123,7 +123,7 @@ namespace NeoSmart.Caching.Sqlite
                         db?.Dispose();
                         db?.Close();
 
-                        _logger.LogDebug("Deleting existing incompatible cache db file {CachePath}", _config.CachePath);
+                        _logger.LogInformation("Deleting existing incompatible cache db file {CachePath}", _config.CachePath);
                         System.IO.File.Delete(_config.CachePath);
                     }
                 }
@@ -207,7 +207,7 @@ namespace NeoSmart.Caching.Sqlite
             if (_db == null)
             {
                 var connectionString = _config.ConnectionString;
-                _logger.LogDebug("Opening connection to SQLite database: " +
+                _logger.LogTrace("Opening connection to SQLite database: " +
                     "{ConnectionString}", connectionString);
 
                 // First try to open an existing database
@@ -227,7 +227,7 @@ namespace NeoSmart.Caching.Sqlite
                         db?.Dispose();
                         db?.Close();
 
-                        _logger.LogDebug("Deleting existing incompatible cache db file {CachePath}", _config.CachePath);
+                        _logger.LogInformation("Deleting existing incompatible cache db file {CachePath}", _config.CachePath);
                         System.IO.File.Delete(_config.CachePath);
                     }
                 }
@@ -245,7 +245,7 @@ namespace NeoSmart.Caching.Sqlite
 
         private async Task InitializeAsync(CancellationToken cancel)
         {
-            _logger.LogInformation("Initializing db cache");
+            _logger.LogTrace("Initializing db cache");
 
             using (var transaction = _db.BeginTransaction())
             {

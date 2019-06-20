@@ -20,7 +20,7 @@ namespace NeoSmart.Caching.Sqlite
             _db = db;
             _logger = logger;
 
-            _logger.LogDebug("Initializing db command pool");
+            _logger.LogTrace("Initializing db command pool");
             for (int i = 0; i < _pools.Length; ++i)
             {
                 _pools[i] = new ConcurrentBag<SqliteCommand>();
@@ -42,7 +42,7 @@ namespace NeoSmart.Caching.Sqlite
 
             if (!pool.TryTake(out var command))
             {
-                _logger.LogDebug("Adding a new {DbCommand} command to the command pool", type);
+                _logger.LogTrace("Adding a new {DbCommand} command to the command pool", type);
                 command = new SqliteCommand(DbCommands.Commands[(int)type], _db);
             }
 
@@ -63,7 +63,7 @@ namespace NeoSmart.Caching.Sqlite
 
             if (!pool.TryTake(out var command))
             {
-                _logger.LogDebug("Adding a new {DbCommand} command to the command pool", type);
+                _logger.LogTrace("Adding a new {DbCommand} command to the command pool", type);
                 command = new SqliteCommand(DbCommands.Commands[(int)type], _db);
             }
 
