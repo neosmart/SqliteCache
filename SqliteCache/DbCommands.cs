@@ -33,21 +33,18 @@ namespace NeoSmart.Caching.Sqlite
                 // Get an unexpired item from the cache
                 $"SELECT value FROM cache " +
                 $"  WHERE key = @key " +
-                $"  AND {NotExpiredClause} " +
-                $"LIMIT 1;" +
+                $"  AND {NotExpiredClause};" +
                 // And update the expiry if it is unexpired and has a renewal
                 $"UPDATE cache " +
-                $"SET expiry = @now + renewal " +
+                $"SET expiry = (@now + renewal) " +
                 $"WHERE " +
                 $"  key = @key " +
                 $"  AND expiry >= @now " +
-                $"  AND renewal IS NOT NULL " +
-                $"LIMIT 1;";
+                $"  AND renewal IS NOT NULL;";
 
-            Commands[(int) Operation.Remove] =
+            Commands[(int)Operation.Remove] =
                 "DELETE FROM cache " +
-                "  WHERE key = @key " +
-                "  LIMIT 1";
+                "  WHERE key = @key";
 
             Commands[(int)Operation.RemoveExpired] =
                 "DELETE FROM cache " +
