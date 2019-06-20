@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NeoSmart.SqliteCache
 {
-    public enum Operation
+    enum Operation
     {
         Insert,
         Remove,

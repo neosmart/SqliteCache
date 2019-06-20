@@ -1,32 +1,31 @@
+using global::NeoSmart.SqliteCache;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NeoSmart.SqliteCache;
 using System;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SqliteCacheTests
+namespace NeoSmart.SqliteCache.Tests
 {
+
     [TestClass]
-    public class UnitTest1
+    public class SqliteCacheTests
     {
         public Encoding DefaultEncoding = new UTF8Encoding(false);
-        Configuration Configuration => new Configuration()
+        SqliteCacheOptions Configuration => new SqliteCacheOptions()
         {
             MemoryOnly = false,
             CachePath = "test.db",
         };
 
-        public UnitTest1()
+        public SqliteCacheTests()
         {
-            SQLitePCL.Batteries.Init();
         }
 
-        private async Task<SqliteCache> CreateDefaultAsync()
+        private SqliteCache CreateDefault()
         {
             var logger = new TestLogger<SqliteCache>();
-            var cacheDb = new NeoSmart.SqliteCache.SqliteCache(Configuration, logger);
-            await cacheDb.ConnectAsync(default);
+            var cacheDb = new SqliteCache(Configuration, logger);
 
             return cacheDb;
         }
@@ -36,7 +35,7 @@ namespace SqliteCacheTests
         {
             System.IO.File.Delete(Configuration.CachePath);
 
-            using (var cache = await CreateDefaultAsync())
+            using (var cache = CreateDefault())
             {
                 var bytes = cache.Get("hello");
                 Assert.IsNull(bytes);
@@ -53,19 +52,17 @@ namespace SqliteCacheTests
             }
 
             // Check persistence
-            using (var cache = await CreateDefaultAsync())
+            using (var cache = CreateDefault())
             {
-                await cache.ConnectAsync(default);
-
                 var bytes = await cache.GetAsync("hello");
                 CollectionAssert.AreEqual(bytes, DefaultEncoding.GetBytes("hello"));
             }
         }
 
         [TestMethod]
-        public async Task ExpiredIgnored()
+        public void ExpiredIgnored()
         {
-            using (var cache = await CreateDefaultAsync())
+            using (var cache = CreateDefault())
             {
                 cache.Set("hi there", DefaultEncoding.GetBytes("hello"),
                     new DistributedCacheEntryOptions()
@@ -76,9 +73,9 @@ namespace SqliteCacheTests
         }
 
         [TestMethod]
-        public async Task ExpiredRenewal()
+        public void ExpiredRenewal()
         {
-            using (var cache = await CreateDefaultAsync())
+            using (var cache = CreateDefault())
             {
                 cache.Set("hi there", DefaultEncoding.GetBytes("hello"),
                     new DistributedCacheEntryOptions()

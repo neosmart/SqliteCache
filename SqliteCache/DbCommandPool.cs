@@ -9,7 +9,7 @@ using LazyCommand = System.Lazy<Microsoft.Data.Sqlite.SqliteCommand>;
 
 namespace NeoSmart.SqliteCache
 {
-    public class DbCommandPool : IDisposable
+    class DbCommandPool : IDisposable
     {
         private readonly ILogger _logger;
         private readonly ConcurrentBag<SqliteCommand>[] _pools = new ConcurrentBag<SqliteCommand>[DbCommands.Count];

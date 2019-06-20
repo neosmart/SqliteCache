@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using DbConnectionStringBuilder = Microsoft.Data.Sqlite.SqliteConnectionStringBuilder;
 using DbConnection = Microsoft.Data.Sqlite.SqliteConnection;
@@ -16,41 +17,143 @@ namespace NeoSmart.SqliteCache
     {
         public const int SchemaVersion = 1;
 
-        private readonly Configuration _config;
+        private readonly SqliteCacheOptions _config;
         private readonly ILogger _logger;
-        private DbCommandPool _cachedDbCommands;
-        private DbCommandPool Commands => _cachedDbCommands;
-
         private DbConnection _db;
 
-        public SqliteCache(Configuration configuration, ILogger<SqliteCache> logger)
+        private DbCommandPool Commands { get; set; }
+
+        static SqliteCache()
         {
-            _config = configuration;
-            _logger = logger;
+            SQLitePCL.Batteries.Init();
         }
 
-        #region Database Initialization
-        private string ConnectionString
+        public SqliteCache(IOptions<SqliteCacheOptions> options, ILogger<SqliteCache> logger)
+            : this(options.Value, logger)
         {
-            get
-            {
-                var sb = new DbConnectionStringBuilder();
-                sb.DataSource = _config.MemoryOnly
-                    ? ":memory:" : _config.CachePath;
-                sb.Mode = _config.MemoryOnly
-                    ? SqliteOpenMode.Memory : SqliteOpenMode.ReadWriteCreate;
+        }
 
-                return sb.ConnectionString;
-            }
+        public SqliteCache(SqliteCacheOptions options, ILogger<SqliteCache> logger)
+        {
+            _config = options;
+            _logger = logger;
+
+            Connect();
         }
 
         public void Dispose()
         {
-            _cachedDbCommands?.Dispose();
+            Commands?.Dispose();
             _db?.Close();
             _db?.Dispose();
         }
 
+        #region Database Connection Initialization
+        private bool CheckExistingDb(DbConnection db)
+        {
+            try
+            {
+                // Check for correct structure
+                using (var cmd = new DbCommand(@"SELECT COUNT(*) from sqlite_master", db))
+                {
+                    var result = (long)cmd.ExecuteScalar();
+                    // We are expecting two tables and one additional index
+                    if (result != 3)
+                    {
+                        _logger.LogWarning("Incorrect/incompatible existing cache db structure found!");
+                        return false;
+                    }
+                }
+
+                // Check for correct version
+                using (var cmd = new DbCommand(@"SELECT value FROM meta WHERE key = ""version""", db))
+                {
+                    var result = (long)cmd.ExecuteScalar();
+                    if (result != SchemaVersion)
+                    {
+                        _logger.LogWarning("Existing cache db has unsupported schema version {SchemaVersion}",
+                            result);
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while checking compatibilty of existing cache db!");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void Connect()
+        {
+            if (_db == null)
+            {
+                var connectionString = _config.ConnectionString;
+                _logger.LogDebug("Opening connection to SQLite database: " +
+                    "{ConnectionString}", connectionString);
+
+                // First try to open an existing database
+                if (!_config.MemoryOnly && System.IO.File.Exists(_config.CachePath))
+                {
+                    _logger.LogTrace("Found existing database at {CachePath}", _config.CachePath);
+
+                    var db = new SqliteConnection(_config.ConnectionString);
+                    db.Open();
+                    if (CheckExistingDb(db))
+                    {
+                        // Everything checks out, we can use this as our cache db
+                        _db = db;
+                    }
+                    else
+                    {
+                        db?.Dispose();
+                        db?.Close();
+
+                        _logger.LogDebug("Deleting existing incompatible cache db file {CachePath}", _config.CachePath);
+                        System.IO.File.Delete(_config.CachePath);
+                    }
+                }
+
+                if (_db == null)
+                {
+                    _db = new DbConnection(_config.ConnectionString);
+                    _db.Open();
+                    Initialize();
+                }
+
+                Commands = new DbCommandPool(_db, _logger);
+            }
+        }
+
+        private void Initialize()
+        {
+            _logger.LogInformation("Initializing db cache");
+
+            using (var transaction = _db.BeginTransaction())
+            {
+                using (var cmd = new DbCommand(Resources.TableInitCommand, _db))
+                {
+                    cmd.Transaction = transaction;
+                    cmd.ExecuteNonQuery();
+                }
+                using (var cmd = new DbCommand(
+                    $"INSERT INTO meta (key, value) " +
+                    $"VALUES " +
+                    $@"(""version"", {SchemaVersion}), " +
+                    $@"(""created"", {DateTimeOffset.UtcNow.Ticks})", _db))
+                {
+                    cmd.Transaction = transaction;
+                    cmd.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+        }
+
+        // Some day, Microsoft will deign it useful to add async service initializers and we can
+        // bring this code back to the light of day.
+#if false
         private async Task<bool> CheckExistingDbAsync(DbConnection db, CancellationToken cancel)
         {
             try
@@ -87,12 +190,11 @@ namespace NeoSmart.SqliteCache
 
             return true;
         }
-
         public async ValueTask ConnectAsync(CancellationToken cancel)
         {
             if (_db == null)
             {
-                var connectionString = ConnectionString;
+                var connectionString = _config.ConnectionString;
                 _logger.LogDebug("Opening connection to SQLite database: " +
                     "{ConnectionString}", connectionString);
 
@@ -101,7 +203,7 @@ namespace NeoSmart.SqliteCache
                 {
                     _logger.LogTrace("Found existing database at {CachePath}", _config.CachePath);
 
-                    var db = new SqliteConnection(ConnectionString);
+                    var db = new SqliteConnection(_config.ConnectionString);
                     await db.OpenAsync();
                     if (await CheckExistingDbAsync(db, cancel))
                     {
@@ -120,12 +222,12 @@ namespace NeoSmart.SqliteCache
 
                 if (_db == null)
                 {
-                    _db = new DbConnection(ConnectionString);
+                    _db = new DbConnection(_config.ConnectionString);
                     await _db.OpenAsync();
                     await InitializeAsync(cancel);
                 }
 
-                _cachedDbCommands = new DbCommandPool(_db, _logger);
+                Commands = new DbCommandPool(_db, _logger);
             }
         }
 
@@ -152,6 +254,7 @@ namespace NeoSmart.SqliteCache
                 transaction.Commit();
             }
         }
+#endif
         #endregion
 
         public byte[] Get(string key)
