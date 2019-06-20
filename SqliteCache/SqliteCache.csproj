@@ -1,9 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
+    <Version>0.1</Version>
+    <Authors>neosmart, Mahmoud Al-Qudsi</Authors>
+    <Company>NeoSmart Technologies</Company>
+    <Product>SqliteCache</Product>
+    <Description>A SQLite-backed IDistributedCache implementation for ASP.NET Core.</Description>
+    <Copyright>NeoSmart Technologies 2019</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>idistributedcache, cache, sqlite, persistent</PackageTags>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>NeoSmart.Caching.Sqlite.snk</AssemblyOriginatorKeyFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
