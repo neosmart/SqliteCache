@@ -29,8 +29,8 @@ namespace NeoSmart.Caching.Sqlite
             SQLitePCL.Batteries.Init();
         }
 
-        public SqliteCache(IOptions<SqliteCacheOptions> options)
-            : this(options.Value, options.Value.Logger)
+        public SqliteCache(IOptions<SqliteCacheOptions> options, ILogger<SqliteCache> logger)
+            : this(options.Value, logger)
         {
         }
 
@@ -141,7 +141,8 @@ namespace NeoSmart.Caching.Sqlite
 
         private void Initialize()
         {
-            _logger.LogInformation("Initializing db cache");
+            _logger.LogInformation("Initializing db cache: {ConnectionString}",
+                _config.ConnectionString);
 
             using (var transaction = _db.BeginTransaction())
             {
@@ -245,7 +246,8 @@ namespace NeoSmart.Caching.Sqlite
 
         private async Task InitializeAsync(CancellationToken cancel)
         {
-            _logger.LogTrace("Initializing db cache");
+            _logger.LogInformation("Initializing db cache: {ConnectionString}",
+                _config.ConnectionString);
 
             using (var transaction = _db.BeginTransaction())
             {
