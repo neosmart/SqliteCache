@@ -5,7 +5,7 @@
     <LangVersion>8.0</LangVersion>
     <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
-    <Version>0.1</Version>
+    <Version>0.1.1</Version>
     <Authors>neosmart, Mahmoud Al-Qudsi</Authors>
     <Company>NeoSmart Technologies</Company>
     <Product>SqliteCache</Product>
