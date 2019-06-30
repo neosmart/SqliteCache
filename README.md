@@ -1,11 +1,14 @@
 # SqliteCache for ASP.NET Core
 
-SqliteCache is a persistent cache implementing `IDistributedCache` for ASP.NET Core projects.
+[SqliteCache](https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core) is a persistent cache
+implementing `IDistributedCache` for ASP.NET Core projects.
 
 SqliteCache uses a locally stored SQLite database file (taking advantage of SQLite's battle-tested
 safe multi-threaded access features) to replicate persistent caching, allowing developers to mimic
 the behavior of staging or production targets without all the overhead or hassle of a traditional
-`IDistributedCache` implementation.
+`IDistributedCache` implementation. You can read more about its design and inspiration in [the
+official release post](https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core) on the NeoSmart
+blog.
 
 ## Why `NeoSmart.Caching.Sqlite`?
 
@@ -32,6 +35,54 @@ follows:
 
 ```
 Install-Package NeoSmart.Caching.Sqlite
+```
+
+## Usage
+
+Using SqliteCache is straight-forward, and should be extremely familiar for anyone that's configured
+an ASP.NET Core application before. *Starting by adding a namespace import `using
+NeoSmart.Caching.Sqlite` makes things easier as the editor will pull in the correct extension
+methods.*
+
+If using SqliteCache in an ASP.NET Core project, the SQLite-backed cache should be added as an
+`IDistributedCache` type by adding the following to your `ConfigureServices` method, by default
+located in `Startup.cs`:
+
+```csharp
+// using NeoSmart.Caching.Sqlite;
+
+public void ConfigureServices(IServiceCollection services)
+{
+    ...
+
+    // Note: this *must* come before services.AddMvc()!
+    services.AddSqliteCache(options => {
+        options.CachePath = @"C:\data\bazaar\cache.db";
+    });
+
+    services.AddMvc();
+
+    ...
+}
+```
+
+Afterwards, the `SqliteCache` instance will be made available to both the framework and the
+application via dependency injection, and can be imported and used via either the
+`IDistributedCache` abstract type or the concrete `SqliteCache` type:
+
+```csharp
+// using Microsoft.Extensions.Caching.Distributed;
+public class FooModel(DbContext db, IDistributedCache cache)
+{
+    _db = db;
+    _cache = cache;
+
+    cache.SetString("foo", "bar");
+    Assert.AreEqual(cache.GetString("foo"), "bar");
+
+    Assert.AreEqual(typeof(NeoSmart.Caching.Sqlite.SqliteCache),
+                    cache.GetType());
+}
 ```
 
 ## License
