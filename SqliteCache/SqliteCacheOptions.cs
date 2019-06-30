@@ -1,9 +1,6 @@
 using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NeoSmart.Caching.Sqlite
 {
@@ -21,6 +18,10 @@ namespace NeoSmart.Caching.Sqlite
         /// </summary>
         public string CachePath { get; set; } = "SqliteCache.db";
 
+        /// <summary>
+        /// Specifies how often expired items are removed in the background.
+        /// Background eviction is disabled if set to <c>null</c>.
+        /// </summary>
         public TimeSpan? CleanupInterval { get; set; } = TimeSpan.FromMinutes(30);
 
         internal string ConnectionString

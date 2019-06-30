@@ -1,15 +1,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using DbConnectionStringBuilder = Microsoft.Data.Sqlite.SqliteConnectionStringBuilder;
 using DbConnection = Microsoft.Data.Sqlite.SqliteConnection;
 using DbCommand = Microsoft.Data.Sqlite.SqliteCommand;
-using DbDataReader = Microsoft.Data.Sqlite.SqliteDataReader;
 
 namespace NeoSmart.Caching.Sqlite
 {
@@ -111,7 +108,7 @@ namespace NeoSmart.Caching.Sqlite
                 {
                     _logger.LogTrace("Found existing database at {CachePath}", _config.CachePath);
 
-                    var db = new SqliteConnection(_config.ConnectionString);
+                    var db = new DbConnection(_config.ConnectionString);
                     db.Open();
                     if (CheckExistingDb(db))
                     {
