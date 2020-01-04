@@ -10,7 +10,7 @@ using DbCommand = Microsoft.Data.Sqlite.SqliteCommand;
 
 namespace NeoSmart.Caching.Sqlite
 {
-    public class SqliteCache : IDistributedCache, IDisposable
+    public sealed class SqliteCache : IDistributedCache, IDisposable
     {
         public const int SchemaVersion = 1;
 

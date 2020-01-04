@@ -1,22 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
-    <Version>0.1.1</Version>
+    <Version>3.1.0</Version>
     <Authors>neosmart, Mahmoud Al-Qudsi</Authors>
     <Company>NeoSmart Technologies</Company>
     <Product>SqliteCache</Product>
-    <Description>A SQLite-backed IDistributedCache implementation for ASP.NET Core.</Description>
-    <Copyright>NeoSmart Technologies 2019</Copyright>
+    <Description>A SQLite-backed IDistributedCache cache implementation for ASP.NET Core. Transparent, persistent caching.</Description>
+    <Copyright>NeoSmart Technologies 2019-2020</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>idistributedcache, cache, sqlite, persistent</PackageTags>
-    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <PackageTags>idistributedcache, cache, sqlite, sqlitecache, distributed cache, aspnetcore</PackageTags>
+    <PackageReleaseNotes>1.0:
+    - Added .netcoreapp3.1 target
+    - Switched to SQLitePCLRaw.bundle_e_sqlite3 (same as .NET Core 3.1 web projects)
+    - SqliteCache is now a sealed class to prevent dispose problems if derived
+    - Version number aligns with .NET Core semantic versioning</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>NeoSmart.Caching.Sqlite.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -27,14 +31,21 @@
       <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.2.0" />
-    <PackageReference Include="microsoft.extensions.dependencyinjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="1.1.14" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.0" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -40,7 +40,9 @@ namespace NeoSmart.Caching.Sqlite
             if (!pool.TryTake(out var command))
             {
                 _logger.LogTrace("Adding a new {DbCommand} command to the command pool", type);
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
                 command = new SqliteCommand(DbCommands.Commands[(int)type], _db);
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
             }
 
             try
@@ -61,7 +63,9 @@ namespace NeoSmart.Caching.Sqlite
             if (!pool.TryTake(out var command))
             {
                 _logger.LogTrace("Adding a new {DbCommand} command to the command pool", type);
+#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
                 command = new SqliteCommand(DbCommands.Commands[(int)type], _db);
+#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
             }
 
             try
