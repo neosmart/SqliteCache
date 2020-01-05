@@ -16,8 +16,8 @@ namespace NeoSmart.Caching.Sqlite
 
         private readonly SqliteCacheOptions _config;
         private readonly ILogger _logger;
+        private readonly Timer _cleanupTimer;
         private DbConnection _db;
-        private Timer _cleanupTimer;
 
         private DbCommandPool Commands { get; set; }
 
@@ -136,6 +136,7 @@ namespace NeoSmart.Caching.Sqlite
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         private void Initialize()
         {
             _logger.LogInformation("Initializing db cache: {ConnectionString}",

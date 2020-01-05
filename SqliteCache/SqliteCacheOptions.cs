@@ -13,10 +13,28 @@ namespace NeoSmart.Caching.Sqlite
         /// </summary>
         public bool MemoryOnly { get; set; } = false;
 
+        private string _cachePath = "SqliteCache.db";
         /// <summary>
         /// Only if <see cref="MemoryOnly" is <c>false</c> />
         /// </summary>
-        public string CachePath { get; set; } = "SqliteCache.db";
+        public string CachePath
+        {
+            get => _cachePath;
+            set
+            {
+                // User might have passed a connection string instead of a data source
+                if (value.StartsWith("Data Source=", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    value = value.Replace("Data Source=", "");
+                }
+                value = value.Trim();
+                if (value.Contains("=") || value.Contains("\""))
+                {
+                    throw new ArgumentException("CachePath must be a path and not a connection string!");
+                }
+                _cachePath = value;
+            }
+        }
 
         /// <summary>
         /// Specifies how often expired items are removed in the background.
