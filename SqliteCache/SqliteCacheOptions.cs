@@ -51,6 +51,7 @@ namespace NeoSmart.Caching.Sqlite
                     ? ":memory:" : CachePath;
                 sb.Mode = MemoryOnly
                     ? SqliteOpenMode.Memory : SqliteOpenMode.ReadWriteCreate;
+                sb.Cache = SqliteCacheMode.Shared;
 
                 return sb.ConnectionString;
             }
