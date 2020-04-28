@@ -327,6 +327,22 @@ namespace NeoSmart.Caching.Sqlite
             });
         }
 
+        public void Begin()
+        {
+            Commands.Use(Operation.Begin, cmd =>
+            {
+                cmd.ExecuteNonQuery();
+            });
+        }
+
+        public void End()
+        {
+            Commands.Use(Operation.End, cmd =>
+            {
+                cmd.ExecuteNonQuery();
+            });
+        }
+
         private void CreateForSet(DbCommand cmd, string key, byte[] value, DistributedCacheEntryOptions options)
         {
             cmd.Parameters.AddWithValue("@key", key);

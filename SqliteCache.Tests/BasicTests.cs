@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
@@ -56,6 +57,54 @@ namespace NeoSmart.Caching.Sqlite.Tests
                 CollectionAssert.AreEqual(bytes, DefaultEncoding.GetBytes("hello"));
             }
         }
+
+
+        [TestMethod]
+        public void TestTransactionUsageSpeed()
+        {
+            
+            Stopwatch sw = new Stopwatch();
+
+            Random rnd = new Random();
+
+            long noTransaction, withTransaction;
+
+            using (var cache = CreateDefault())
+            {
+                sw.Start();
+
+                for (int i=0; i < 1000; i++)
+                { 
+                    cache.SetString(rnd.Next().ToString(), rnd.Next().ToString());
+                }
+
+                sw.Stop();
+
+                noTransaction = sw.ElapsedMilliseconds;
+            }
+
+            System.IO.File.Delete(Configuration.CachePath);
+
+            using (var cache = CreateDefault())
+            {
+                sw.Restart();
+
+                cache.Begin();
+                for (int i=0; i < 1000; i++)
+                { 
+                    cache.SetString(rnd.Next().ToString(), rnd.Next().ToString());
+                }
+                cache.End();
+
+                sw.Stop();
+
+                withTransaction = sw.ElapsedMilliseconds;
+            }
+
+            // at least 100 times faster
+            Assert.IsTrue(noTransaction > 100*withTransaction);
+        }
+
 
         [TestMethod]
         public void ExpiredIgnored()
