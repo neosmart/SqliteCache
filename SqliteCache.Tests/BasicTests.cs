@@ -61,8 +61,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
 
         [TestMethod]
         public void TestTransactionUsageSpeed()
-        {
-            
+        {          
             Stopwatch sw = new Stopwatch();
 
             Random rnd = new Random();
@@ -89,12 +88,13 @@ namespace NeoSmart.Caching.Sqlite.Tests
             {
                 sw.Restart();
 
-                cache.Begin();
-                for (int i=0; i < 1000; i++)
+                using (var session = new SqliteCacheSession(cache))
                 { 
-                    cache.SetString(rnd.Next().ToString(), rnd.Next().ToString());
+                    for (int i=0; i < 1000; i++)
+                    { 
+                        cache.SetString(rnd.Next().ToString(), rnd.Next().ToString());
+                    }
                 }
-                cache.End();
 
                 sw.Stop();
 
