@@ -12,15 +12,23 @@ namespace NeoSmart.Caching.Sqlite
         public SqliteCacheSession (IDistributedCache cache)
         {
             if (cache is SqliteCache sqliteCache)
-            { 
                 _sqliteCache = sqliteCache;
-                _sqliteCache.Begin();
-            }
+        }
+
+        public SqliteCacheSession BeginSession()
+        { 
+            _sqliteCache?.Begin();
+            return this;
+        }
+
+        public void EndSession()
+        { 
+            _sqliteCache?.End();
         }
 
         public void Dispose()
         {
-            _sqliteCache?.End();
+            EndSession();
         }
     }
 }

@@ -88,7 +88,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
             {
                 sw.Restart();
 
-                using (var session = new SqliteCacheSession(cache))
+                using (var session = new SqliteCacheSession(cache).BeginSession())
                 { 
                     for (int i=0; i < 1000; i++)
                     { 
