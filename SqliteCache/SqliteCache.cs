@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 
 using DbConnection = Microsoft.Data.Sqlite.SqliteConnection;
 using DbCommand = Microsoft.Data.Sqlite.SqliteCommand;
+using System.Diagnostics;
 
 namespace NeoSmart.Caching.Sqlite
 {
@@ -16,7 +17,7 @@ namespace NeoSmart.Caching.Sqlite
 
         private readonly SqliteCacheOptions _config;
         private readonly ILogger _logger;
-        private readonly Timer _cleanupTimer;
+        private readonly Timer? _cleanupTimer;
         private DbConnection _db;
 
         private DbCommandPool Commands { get; set; }
@@ -26,17 +27,27 @@ namespace NeoSmart.Caching.Sqlite
             SQLitePCL.Batteries.Init();
         }
 
-        public SqliteCache(IOptions<SqliteCacheOptions> options, ILogger<SqliteCache> logger)
+        public SqliteCache(IOptions<SqliteCacheOptions> options, ILogger<SqliteCache>? logger = null)
             : this(options.Value, logger)
         {
         }
 
-        public SqliteCache(SqliteCacheOptions options, ILogger<SqliteCache> logger)
+        public SqliteCache(SqliteCacheOptions options, ILogger<SqliteCache>? logger = null)
         {
             _config = options;
-            _logger = logger;
+            _logger = logger ?? new NullLogger<SqliteCache>();
 
+            // Silence warnings about variables not initialized in constructor because they ARE
+            // initialized in the call to `Connect()`.
+            _db = null!;
+            Commands = null!;
             Connect();
+
+            // Directly checking _db/Commands will cause Roslyn to think they may be null
+            var x = _db;
+            Debug.Assert(x != null);
+            var y = Commands;
+            Debug.Assert(y != null);
 
             // This has to be after the call to Connect()
             if (_config.CleanupInterval.HasValue)
@@ -270,22 +281,22 @@ namespace NeoSmart.Caching.Sqlite
 
         public byte[] Get(string key)
         {
-            return Commands.Use(Operation.Get, cmd =>
+            return (byte[]) Commands.Use(Operation.Get, cmd =>
             {
                 cmd.Parameters.AddWithValue("@key", key);
                 cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
-                return (byte[])cmd.ExecuteScalar();
-            });
+                return cmd.ExecuteScalar();
+            })!;
         }
 
         public async Task<byte[]> GetAsync(string key, CancellationToken cancel = default)
         {
-            return (byte[]) await Commands.UseAsync(Operation.Get, cmd =>
+            return (byte[]) (await Commands.UseAsync(Operation.Get, cmd =>
             {
                 cmd.Parameters.AddWithValue("@key", key);
                 cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
-                return cmd.ExecuteScalarAsync(cancel);
-            });
+                return cmd.ExecuteScalarAsync(cancel)!;
+            }))!;
         }
 
         public void Refresh(string key)
@@ -305,7 +316,7 @@ namespace NeoSmart.Caching.Sqlite
                 cmd.Parameters.AddWithValue("@key", key);
                 cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
                 return cmd.ExecuteScalarAsync(cancel);
-            });
+            })!;
         }
 
         public void Remove(string key)
@@ -350,8 +361,8 @@ namespace NeoSmart.Caching.Sqlite
                 expiry = (expiry ?? DateTimeOffset.UtcNow) + renewal;
             }
 
-            cmd.Parameters.AddWithValue("@expiry", (object) expiry?.Ticks ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@renewal", (object) renewal?.Ticks ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@expiry", expiry?.Ticks ?? (object) DBNull.Value);
+            cmd.Parameters.AddWithValue("@renewal", renewal?.Ticks ?? (object) DBNull.Value);
         }
 
         public void Set(string key, byte[] value, DistributedCacheEntryOptions options)
@@ -375,11 +386,11 @@ namespace NeoSmart.Caching.Sqlite
 
         public void RemoveExpired()
         {
-            var removed = Commands.Use(Operation.RemoveExpired, cmd =>
+            var removed = (long) Commands.Use(Operation.RemoveExpired, cmd =>
             {
                 cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
-                return (long)cmd.ExecuteScalar();
-            });
+                return cmd.ExecuteScalar();
+            })!;
 
             if (removed > 0)
             {
@@ -389,11 +400,11 @@ namespace NeoSmart.Caching.Sqlite
 
         public async Task RemoveExpiredAsync(CancellationToken cancel = default)
         {
-            var removed = (long) await Commands.UseAsync(Operation.RemoveExpired, cmd =>
+            var removed = (long) (await Commands.UseAsync(Operation.RemoveExpired, cmd =>
             {
                 cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
                 return cmd.ExecuteScalarAsync(cancel);
-            });
+            }))!;
 
             if (removed > 0)
             {
