@@ -136,7 +136,6 @@ namespace NeoSmart.Caching.Sqlite
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         private void Initialize()
         {
             _logger.LogInformation("Initializing db cache: {ConnectionString}",
