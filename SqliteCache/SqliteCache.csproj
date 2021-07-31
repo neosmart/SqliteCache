@@ -1,32 +1,34 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
     <LangVersion>9.0</LangVersion>
     <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
-    <Version>5.0.0-preview1</Version>
+    <Version>5.0.0-preview2</Version>
     <Nullable>enable</Nullable>
     <Authors>Mahmoud Al-Qudsi, neosmart, mqudsi</Authors>
     <Company>NeoSmart Technologies</Company>
     <Product>SqliteCache</Product>
-    <Description>A SQLite-backed IDistributedCache cache implementation for ASP.NET Core. Transparent, persistent caching.</Description>
+    <Description>An SQLite-backed IDistributedCache cache implementation for ASP.NET Core. Transparent, persistent caching.</Description>
     <Copyright>NeoSmart Technologies 2019-2021</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>idistributedcache, cache, sqlite, sqlitecache, distributed, aspnetcore, asp, core, performance</PackageTags>
-    <PackageReleaseNotes>Version 5.0:
-    - ILogger constructor parameter is now optional
-    - A separate SqliteConnection is used for each SqlCommand instance
+    <PackageReleaseNotes>
+        Version 5.0:
+        - ILogger constructor parameter is now optional
+        - A separate SqliteConnection is used for each SqlCommand instance
+        - WAL mode and normal synchronization pragmas are set at startup
 
-Version 3.1:
-    - Added .netcoreapp3.1 target
-    - Switched to SQLitePCLRaw.bundle_e_sqlite3 (same as .NET Core 3.1 web projects)
-    - SqliteCache is now a sealed class to prevent dispose problems if derived
-    - Version number aligns with .NET Core semantic versioning
-</PackageReleaseNotes>
+        Version 3.1:
+        - Added .netcoreapp3.1 target
+        - Switched to SQLitePCLRaw.bundle_e_sqlite3 (same as .NET Core 3.1 web projects)
+        - SqliteCache is now a sealed class to prevent dispose problems if derived
+        - Version number aligns with .NET Core semantic versioning
+    </PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>NeoSmart.Caching.Sqlite.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
