@@ -144,6 +144,16 @@ namespace NeoSmart.Caching.Sqlite
                 }
 
                 Commands = new DbCommandPool(_db, _logger);
+
+                // Explicitly set default journal mode and fsync behavior
+                using (var cmd = new DbCommand("PRAGMA journal_mode = WAL;", _db))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                using (var cmd = new DbCommand("PRAGMA synchronous = NORMAL;", _db))
+                {
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
@@ -394,7 +404,7 @@ namespace NeoSmart.Caching.Sqlite
 
             if (removed > 0)
             {
-                _logger.LogDebug("Evicted {DeletedCacheEntryCount} expired entries from cache", removed);
+                _logger.LogTrace("Evicted {DeletedCacheEntryCount} expired entries from cache", removed);
             }
         }
 
@@ -408,7 +418,7 @@ namespace NeoSmart.Caching.Sqlite
 
             if (removed > 0)
             {
-                _logger.LogDebug("Evicted {DeletedCacheEntryCount} expired entries from cache", removed);
+                _logger.LogTrace("Evicted {DeletedCacheEntryCount} expired entries from cache", removed);
             }
         }
     }
