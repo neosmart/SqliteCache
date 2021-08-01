@@ -52,6 +52,17 @@ namespace NeoSmart.Caching.Sqlite
                 "DELETE FROM cache " +
                 $"  WHERE NOT {NotExpiredClause};" +
                 $"SELECT CHANGES();";
+
+
+#if DEBUG
+            for (int i = 0; i < Count; ++i)
+            {
+                if (string.IsNullOrEmpty(Commands[i]))
+                {
+                    throw new Exception("Missing SQLite command for operation " + Enum.GetName(typeof(Operation), i));
+                }
+            }
+#endif
         }
     }
 }
