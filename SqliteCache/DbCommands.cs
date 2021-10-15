@@ -9,6 +9,7 @@ namespace NeoSmart.Caching.Sqlite
         RemoveExpired,
         Get,
         Refresh,
+        BulkInsert,
     }
 
     static class DbCommands
@@ -52,6 +53,9 @@ namespace NeoSmart.Caching.Sqlite
                 "DELETE FROM cache " +
                 $"  WHERE NOT {NotExpiredClause};" +
                 $"SELECT CHANGES();";
+
+            Commands[(int)Operation.BulkInsert] =
+                "INSERT OR REPLACE INTO cache (key, value, expiry, renewal) VALUES ";
         }
     }
 }

@@ -8,6 +8,9 @@ using Microsoft.Extensions.Options;
 using DbConnection = Microsoft.Data.Sqlite.SqliteConnection;
 using DbCommand = Microsoft.Data.Sqlite.SqliteCommand;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
 
 namespace NeoSmart.Caching.Sqlite
 {
@@ -352,6 +355,31 @@ namespace NeoSmart.Caching.Sqlite
             cmd.Parameters.AddWithValue("@key", key);
             cmd.Parameters.AddWithValue("@value", value);
 
+            AddExpirationParameters(cmd, options);
+        }
+
+        private void CreateBulkInsert(DbCommand cmd, IEnumerable<KeyValuePair<string, byte[]>> keyValues, DistributedCacheEntryOptions options)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(DbCommands.Commands[(int)Operation.BulkInsert]);
+            int i = 0;
+            foreach (var pair in keyValues) 
+            {
+                sb.Append($"(@key{i}, @value{i}, @expiry, @renewal),");
+                cmd.Parameters.AddWithValue($"@key{i}", pair.Key);
+                cmd.Parameters.AddWithValue($"@value{i}", pair.Value);
+                i++;
+            }
+            sb.Remove(sb.Length - 1, 1);
+            sb.Append(";");
+                
+            AddExpirationParameters(cmd, options);
+            
+            cmd.CommandText = sb.ToString();
+        }
+
+        private void AddExpirationParameters(DbCommand cmd, DistributedCacheEntryOptions options) 
+        {
             DateTimeOffset? expiry = null;
             TimeSpan? renewal = null;
 
@@ -390,6 +418,19 @@ namespace NeoSmart.Caching.Sqlite
             return Commands.UseAsync(Operation.Insert, cmd =>
             {
                 CreateForSet(cmd, key, value, options);
+                return cmd.ExecuteNonQueryAsync(cancel);
+            });
+        }
+
+        public Task SetBulkAsync(IEnumerable<KeyValuePair<string, byte[]>> keyValues, DistributedCacheEntryOptions options,
+            CancellationToken cancel = default)
+        {
+            if (keyValues == null || !keyValues.Any()) {
+              return Task.CompletedTask;
+            }
+            return Commands.UseAsync(Operation.BulkInsert, cmd =>
+            {
+                CreateBulkInsert(cmd, keyValues, options);
                 return cmd.ExecuteNonQueryAsync(cancel);
             });
         }
