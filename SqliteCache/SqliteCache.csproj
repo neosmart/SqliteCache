@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
@@ -22,6 +22,8 @@
         - ILogger constructor parameter is now optional
         - A separate SqliteConnection is used for each SqlCommand instance
         - WAL mode and normal synchronization pragmas are set at startup
+        - Make it possible to inject SqliteCache directly (rather than only as IDistributedCache)
+        - Add IAsyncDisposable implementation for .NET Core 3.1 and above
 
         Version 3.1:
         - Added .netcoreapp3.1 target
