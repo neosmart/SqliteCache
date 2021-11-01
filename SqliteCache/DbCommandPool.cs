@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 namespace NeoSmart.Caching.Sqlite
 {
     class DbCommandPool : IDisposable
+#if NETCOREAPP3_1_OR_GREATER
+        , IAsyncDisposable
+#endif
     {
         /// <summary>
         /// Number of connections to open to the database at startup. Ramps up as concurrency increases.
@@ -58,9 +61,7 @@ namespace NeoSmart.Caching.Sqlite
             if (!pool.TryTake(out var command))
             {
                 _logger.LogTrace("Adding a new {DbCommand} command to the command pool", type);
-#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
                 command = new SqliteCommand(DbCommands.Commands[(int)type], db);
-#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
             }
 
             try
@@ -88,9 +89,7 @@ namespace NeoSmart.Caching.Sqlite
             if (!pool.TryTake(out var command))
             {
                 _logger.LogTrace("Adding a new {DbCommand} command to the command pool", type);
-#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
                 command = new SqliteCommand(DbCommands.Commands[(int)type], db);
-#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
             }
 
             try
@@ -121,5 +120,24 @@ namespace NeoSmart.Caching.Sqlite
                 conn.Dispose();
             }
         }
+
+#if NETCOREAPP3_1_OR_GREATER
+        public async ValueTask DisposeAsync()
+        {
+            foreach (var pool in _commands)
+            {
+                while (pool.TryTake(out var cmd))
+                {
+                    await cmd.DisposeAsync();
+                }
+            }
+
+            foreach (var conn in _connections)
+            {
+                await conn.CloseAsync();
+                await conn.DisposeAsync();
+            }
+        }
+#endif
     }
 }

@@ -56,6 +56,16 @@ namespace NeoSmart.Caching.Sqlite
 
             Commands[(int)Operation.BulkInsert] =
                 "INSERT OR REPLACE INTO cache (key, value, expiry, renewal) VALUES ";
+
+#if DEBUG
+            for (int i = 0; i < Count; ++i)
+            {
+                if (string.IsNullOrEmpty(Commands[i]))
+                {
+                    throw new Exception("Missing SQLite command for operation " + Enum.GetName(typeof(Operation), i));
+                }
+            }
+#endif
         }
     }
 }

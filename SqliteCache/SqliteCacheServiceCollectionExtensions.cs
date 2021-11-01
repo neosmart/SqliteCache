@@ -20,7 +20,8 @@ namespace NeoSmart.Caching.Sqlite
             }
 
             services.AddOptions();
-            services.AddSingleton<IDistributedCache, SqliteCache>();
+            services.AddSingleton<SqliteCache>();
+            services.AddSingleton<IDistributedCache, SqliteCache>(services => services.GetRequiredService<SqliteCache>());
             services.Configure(setupAction);
             return services;
         }

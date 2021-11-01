@@ -15,6 +15,9 @@ using System.Linq;
 namespace NeoSmart.Caching.Sqlite
 {
     public sealed class SqliteCache : IDistributedCache, IDisposable
+#if NETCOREAPP3_1_OR_GREATER
+        , IAsyncDisposable
+#endif
     {
         public const int SchemaVersion = 1;
 
@@ -70,6 +73,27 @@ namespace NeoSmart.Caching.Sqlite
             _db?.Close();
             _db?.Dispose();
         }
+
+#if NETCOREAPP3_0_OR_GREATER
+        public async ValueTask DisposeAsync()
+        {
+            if (_cleanupTimer is not null)
+            {
+                await _cleanupTimer.DisposeAsync();
+            }
+
+            if (Commands is not null)
+            {
+                await Commands.DisposeAsync();
+            }
+
+            if (_db is not null)
+            {
+                await _db.CloseAsync();
+                await _db.DisposeAsync();
+            }
+        }
+#endif
 
         #region Database Connection Initialization
         private bool CheckExistingDb(DbConnection db)
@@ -290,7 +314,7 @@ namespace NeoSmart.Caching.Sqlite
             }
         }
 #endif
-        #endregion
+#endregion
 
         public byte[] Get(string key)
         {
