@@ -11,20 +11,22 @@ namespace NeoSmart.Caching.Sqlite.Tests
     public class BulkInsertTests
     {
         public Encoding DefaultEncoding = new UTF8Encoding(false);
-        SqliteCacheOptions Configuration => new SqliteCacheOptions()
+        private readonly SqliteCacheOptions Configuration = new SqliteCacheOptions()
         {
             MemoryOnly = false,
-            CachePath = "bulktest.db",
+            CachePath = $"bulktest-{Guid.NewGuid()}.db",
         };
 
-        public BulkInsertTests()
+        [TestCleanup]
+        public void DeleteTestDb()
         {
+            System.IO.File.Delete(Configuration.CachePath);
         }
 
-        private SqliteCache CreateDefault()
+        private SqliteCache CreateDefault(bool persistent = false)
         {
             var logger = new TestLogger<SqliteCache>();
-            var cacheDb = new SqliteCache(Configuration, logger);
+            var cacheDb = new SqliteCache(Configuration with { MemoryOnly = !persistent }, logger);
 
             return cacheDb;
         }
@@ -32,9 +34,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
         [TestMethod]
         public async Task BasicBulkTests()
         {
-            System.IO.File.Delete(Configuration.CachePath);
-
-            using (var cache = CreateDefault())
+            using (var cache = CreateDefault(true))
             {
                 var item1 = cache.Get("firstItem");
                 Assert.IsNull(item1);
@@ -63,7 +63,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
             }
 
             // Check persistence
-            using (var cache = CreateDefault())
+            using (var cache = CreateDefault(true))
             {
                 var bytes = await cache.GetAsync("firstItem");
                 Assert.IsNotNull(bytes);
@@ -78,8 +78,6 @@ namespace NeoSmart.Caching.Sqlite.Tests
         [TestMethod]
         public async Task MultipleBulkCalls()
         {
-            System.IO.File.Delete(Configuration.CachePath);
-
             using (var cache = CreateDefault())
             {
                 var item1 = cache.Get("firstItem");

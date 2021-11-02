@@ -4,7 +4,7 @@ using System;
 
 namespace NeoSmart.Caching.Sqlite
 {
-    public class SqliteCacheOptions : IOptions<SqliteCacheOptions>
+    public record SqliteCacheOptions : IOptions<SqliteCacheOptions>
     {
         SqliteCacheOptions IOptions<SqliteCacheOptions>.Value => this;
 

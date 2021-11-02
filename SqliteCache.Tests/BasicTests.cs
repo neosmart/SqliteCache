@@ -10,20 +10,22 @@ namespace NeoSmart.Caching.Sqlite.Tests
     public class SqliteCacheTests
     {
         public Encoding DefaultEncoding = new UTF8Encoding(false);
-        SqliteCacheOptions Configuration => new SqliteCacheOptions()
+        private readonly SqliteCacheOptions Configuration = new SqliteCacheOptions()
         {
             MemoryOnly = false,
-            CachePath = "test.db",
+            CachePath = $"test-{Guid.NewGuid()}.db",
         };
 
-        public SqliteCacheTests()
+        [TestCleanup]
+        public void DeleteTestDb()
         {
+            System.IO.File.Delete(Configuration.CachePath);
         }
 
-        private SqliteCache CreateDefault()
+        private SqliteCache CreateDefault(bool persistent = true)
         {
             var logger = new TestLogger<SqliteCache>();
-            var cacheDb = new SqliteCache(Configuration, logger);
+            var cacheDb = new SqliteCache(Configuration with { MemoryOnly = !persistent }, logger);
 
             return cacheDb;
         }
@@ -31,9 +33,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
         [TestMethod]
         public async Task BasicTests()
         {
-            System.IO.File.Delete(Configuration.CachePath);
-
-            using (var cache = CreateDefault())
+            using (var cache = CreateDefault(true))
             {
                 var bytes = cache.Get("hello");
                 Assert.IsNull(bytes);
@@ -50,7 +50,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
             }
 
             // Check persistence
-            using (var cache = CreateDefault())
+            using (var cache = CreateDefault(true))
             {
                 var bytes = await cache.GetAsync("hello");
                 CollectionAssert.AreEqual(bytes, DefaultEncoding.GetBytes("hello"));
