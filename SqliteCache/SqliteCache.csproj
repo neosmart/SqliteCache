@@ -5,7 +5,7 @@
     <LangVersion>9.0</LangVersion>
     <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
-    <Version>5.0.0-preview2</Version>
+    <Version>5.0.0-preview3</Version>
     <Nullable>enable</Nullable>
     <Authors>Mahmoud Al-Qudsi, neosmart, mqudsi</Authors>
     <Company>NeoSmart Technologies</Company>
@@ -19,11 +19,12 @@
     <PackageTags>idistributedcache, cache, sqlite, sqlitecache, distributed, aspnetcore, asp, core, performance</PackageTags>
     <PackageReleaseNotes>
         Version 5.0:
+        - WAL mode and normal synchronization pragmas are set at startup, dramatically improving performance
         - ILogger constructor parameter is now optional
-        - A separate SqliteConnection is used for each SqlCommand instance
-        - WAL mode and normal synchronization pragmas are set at startup
+        - A separate SqliteConnection is used for each SqlCommand instance, fixing threading issues under UWP
         - Make it possible to inject SqliteCache directly (rather than only as IDistributedCache)
         - Add IAsyncDisposable implementation for .NET Core 3.1 and above
+        - Add a bulk insert option to insert many key-value pairs quickly (credit to first-time contributor Elias Baumgartner aka @Rap22tor)
 
         Version 3.1:
         - Added .netcoreapp3.1 target
