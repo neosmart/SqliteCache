@@ -85,5 +85,22 @@ namespace NeoSmart.Caching.Sqlite.Tests
                 Assert.IsNotNull(cache.Get("hi there"));
             }
         }
+
+        [TestMethod]
+        public void ExpirationStoredInUtc()
+        {
+            var expiryUtc = DateTimeOffset.UtcNow.AddMinutes(-1);
+            var expiryLocal = expiryUtc.ToOffset(TimeSpan.FromHours(5));
+
+            using (var cache = CreateDefault())
+            {
+                cache.Set("key", DefaultEncoding.GetBytes("value"), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpiration = expiryLocal,
+                });
+
+                Assert.IsNull(cache.Get("key"));
+            }
+        }
     }
 }

@@ -409,7 +409,7 @@ namespace NeoSmart.Caching.Sqlite
 
             if (options.AbsoluteExpiration.HasValue)
             {
-                expiry = options.AbsoluteExpiration.Value;
+                expiry = options.AbsoluteExpiration.Value.ToUniversalTime();
             }
             else if (options.AbsoluteExpirationRelativeToNow.HasValue)
             {
