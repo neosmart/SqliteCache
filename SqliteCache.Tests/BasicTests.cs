@@ -2,36 +2,39 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NeoSmart.Caching.Sqlite.Tests
 {
     [TestClass]
-    public class SqliteCacheTests
+    public class BasicTests : IDisposable
     {
         public Encoding DefaultEncoding = new UTF8Encoding(false);
         private readonly SqliteCacheOptions Configuration = new SqliteCacheOptions()
         {
             MemoryOnly = false,
-            CachePath = $"test-{Guid.NewGuid()}.db",
+            CachePath = $"BasicTests-{Guid.NewGuid()}.db",
         };
 
-        [TestCleanup]
-        public void DeleteTestDb()
+        public void Dispose()
         {
+            var logger = new TestLogger<SqliteCache>();
+            logger.LogInformation("Delete db at path {DbPath}", Configuration.CachePath);
             System.IO.File.Delete(Configuration.CachePath);
         }
 
         private SqliteCache CreateDefault(bool persistent = true)
         {
             var logger = new TestLogger<SqliteCache>();
+            logger.LogInformation("Creating a connection to db {DbPath}", Configuration.CachePath);
             var cacheDb = new SqliteCache(Configuration with { MemoryOnly = !persistent }, logger);
 
             return cacheDb;
         }
 
         [TestMethod]
-        public async Task BasicTests()
+        public async Task BasicSetGet()
         {
             using (var cache = CreateDefault(true))
             {
