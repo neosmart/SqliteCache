@@ -5,33 +5,34 @@
     <LangVersion>9.0</LangVersion>
     <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
-    <Version>5.0.0-preview3</Version>
+    <Version>5.0.0</Version>
     <Nullable>enable</Nullable>
     <Authors>Mahmoud Al-Qudsi, neosmart, mqudsi</Authors>
     <Company>NeoSmart Technologies</Company>
     <Product>SqliteCache</Product>
-    <Description>An SQLite-backed IDistributedCache cache implementation for ASP.NET Core. Transparent, persistent caching.</Description>
-    <Copyright>NeoSmart Technologies 2019-2021</Copyright>
+    <Description>An SQLite-backed IDistributedCache cache implementation for ASP.NET Core. Fast, transparent, persistent caching.</Description>
+    <Copyright>NeoSmart Technologies 2019-2022</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>idistributedcache, cache, sqlite, sqlitecache, distributed, aspnetcore, asp, core, performance</PackageTags>
     <PackageReleaseNotes>
-        Version 5.0:
-        - WAL mode and normal synchronization pragmas are set at startup, dramatically improving performance
-        - ILogger constructor parameter is now optional
-        - A separate SqliteConnection is used for each SqlCommand instance, fixing threading issues under UWP
-        - Make it possible to inject SqliteCache directly (rather than only as IDistributedCache)
-        - Add IAsyncDisposable implementation for .NET Core 3.1 and above
-        - Add a bulk insert option to insert many key-value pairs quickly (credit to first-time contributor Elias Baumgartner aka @Rap22tor)
+Version 5.0:
+- WAL mode and normal synchronization pragmas are set at startup, dramatically improving performance
+- ILogger constructor parameter is now optional
+- A separate SqliteConnection is used for each SqlCommand instance, fixing threading issues under UWP
+- Makes it possible to inject SqliteCache directly (rather than only as IDistributedCache)
+- Adds IAsyncDisposable implementation for .NET Core 3.1 and above
+- Adds a bulk insert option to insert many key-value pairs quickly (credit to first-time contributor Elias Baumgartner aka @Rap22tor)
+- Fixes an issue w/ incorrect handling of user-specified non-UTC expiration dates (credit to first-time contributor Ravindu Liyanapathirana, aka @ravindUwU)
 
-        Version 3.1:
-        - Added .netcoreapp3.1 target
-        - Switched to SQLitePCLRaw.bundle_e_sqlite3 (same as .NET Core 3.1 web projects)
-        - SqliteCache is now a sealed class to prevent dispose problems if derived
-        - Version number aligns with .NET Core semantic versioning
-    </PackageReleaseNotes>
+Version 3.1:
+- Added .netcoreapp3.1 target
+- Switched to SQLitePCLRaw.bundle_e_sqlite3 (same as .NET Core 3.1 web projects)
+- SqliteCache is now a sealed class to prevent dispose problems if derived
+- Version number aligns with .NET Core semantic versioning
+	</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>NeoSmart.Caching.Sqlite.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -40,14 +41,22 @@
   <PropertyGroup>
       <IncludeSymbols>true</IncludeSymbols>
       <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.8" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.0.4" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.0.7" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.*" />
   </ItemGroup>
 
