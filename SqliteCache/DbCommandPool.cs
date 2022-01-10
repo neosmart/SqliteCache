@@ -31,10 +31,11 @@ namespace NeoSmart.Caching.Sqlite
                 _commands[i] = new ConcurrentBag<SqliteCommand>();
             }
 
-            _logger.LogTrace("Creating {InitialConnections} initial connections in the pool");
+            _logger.LogTrace("Creating {InitialConnections} initial connections in the pool", InitialConcurrency);
             for (int i = 0; i < InitialConcurrency; ++i)
             {
                 var connection = new SqliteConnection(_connectionString);
+                _logger.LogTrace("Opening connection to {SqliteCacheDbPath}", _connectionString);
                 connection.Open();
                 _connections.Add(connection);
             }
@@ -55,6 +56,8 @@ namespace NeoSmart.Caching.Sqlite
             {
                 _logger.LogTrace("Adding a new connection to the connection pool", type);
                 db = new SqliteConnection(_connectionString);
+                _logger.LogTrace("Opening connection to {SqliteCacheDbPath}", _connectionString);
+                db.Open();
             }
 
             var pool = _commands[(int)type];
@@ -83,6 +86,8 @@ namespace NeoSmart.Caching.Sqlite
             {
                 _logger.LogTrace("Adding a new connection to the connection pool", type);
                 db = new SqliteConnection(_connectionString);
+                _logger.LogTrace("Opening connection to {SqliteCacheDbPath}", _connectionString);
+                await db.OpenAsync();
             }
 
             var pool = _commands[(int)type];
@@ -116,6 +121,7 @@ namespace NeoSmart.Caching.Sqlite
 
             foreach (var conn in _connections)
             {
+                _logger.LogTrace("Closing connection to {SqliteCacheDbPath}", _connectionString);
                 conn.Close();
                 conn.Dispose();
             }
