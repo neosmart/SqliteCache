@@ -3,29 +3,32 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NeoSmart.Caching.Sqlite.Tests
 {
     [TestClass]
-    public class BulkInsertTests
+    public class BulkInsertTests : IDisposable
     {
         public Encoding DefaultEncoding = new UTF8Encoding(false);
         private readonly SqliteCacheOptions Configuration = new SqliteCacheOptions()
         {
             MemoryOnly = false,
-            CachePath = $"bulktest-{Guid.NewGuid()}.db",
+            CachePath = $"BulkInsert-{Guid.NewGuid()}.db",
         };
 
-        [TestCleanup]
-        public void DeleteTestDb()
+        public void Dispose()
         {
+            var logger = new TestLogger<SqliteCache>();
+            logger.LogInformation("Delete db at path {DbPath}", Configuration.CachePath);
             System.IO.File.Delete(Configuration.CachePath);
         }
 
         private SqliteCache CreateDefault(bool persistent = false)
         {
             var logger = new TestLogger<SqliteCache>();
+            logger.LogInformation("Creating a connection to db {DbPath}", Configuration.CachePath);
             var cacheDb = new SqliteCache(Configuration with { MemoryOnly = !persistent }, logger);
 
             return cacheDb;
