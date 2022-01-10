@@ -22,7 +22,14 @@ namespace NeoSmart.Caching.Sqlite.Tests
         {
             var logger = new TestLogger<SqliteCache>();
             logger.LogInformation("Delete db at path {DbPath}", Configuration.CachePath);
-            System.IO.File.Delete(Configuration.CachePath);
+            try
+            {
+                System.IO.File.Delete(Configuration.CachePath);
+            }
+            catch(Exception ex)
+            {
+                logger.LogWarning(ex, "Unable to delete db file at {DbPath}", Configuration.CachePath);
+            }
         }
 
         private SqliteCache CreateDefault(bool persistent = false)
