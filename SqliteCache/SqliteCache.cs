@@ -110,7 +110,7 @@ namespace NeoSmart.Caching.Sqlite
                 // Check for correct structure
                 using (var cmd = new DbCommand(@"SELECT COUNT(*) from sqlite_master", db))
                 {
-                    var result = (long)cmd.ExecuteScalar();
+                    var result = (long)cmd.ExecuteScalar()!;
                     // We are expecting two tables and one additional index
                     if (result != 3)
                     {
@@ -122,7 +122,7 @@ namespace NeoSmart.Caching.Sqlite
                 // Check for correct version
                 using (var cmd = new DbCommand(@"SELECT value FROM meta WHERE key = ""version""", db))
                 {
-                    var result = (long)cmd.ExecuteScalar();
+                    var result = (long)cmd.ExecuteScalar()!;
                     if (result != SchemaVersion)
                     {
                         _logger.LogWarning("Existing cache db has unsupported schema version {SchemaVersion}",
