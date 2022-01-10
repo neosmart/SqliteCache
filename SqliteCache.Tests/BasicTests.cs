@@ -10,7 +10,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
     [TestClass]
     public class BasicTests : IDisposable
     {
-        public Encoding DefaultEncoding = new UTF8Encoding(false);
+        public static readonly Encoding DefaultEncoding = new UTF8Encoding(false);
         private readonly SqliteCacheOptions Configuration = new SqliteCacheOptions()
         {
             MemoryOnly = false,
