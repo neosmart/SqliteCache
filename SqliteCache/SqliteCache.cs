@@ -62,16 +62,22 @@ namespace NeoSmart.Caching.Sqlite
                 {
                     _logger.LogTrace("Beginning background cache cleanup");
                     RemoveExpired();
+                    _logger.LogTrace("Completed background cache cleanup");
                 }, null, TimeSpan.Zero, _config.CleanupInterval.Value);
             }
         }
 
         public void Dispose()
         {
+            _logger.LogTrace("Disposing SQLite cache database at {SqliteCacheDbPath}", _config.CachePath);
             _cleanupTimer?.Dispose();
             Commands?.Dispose();
-            _db?.Close();
-            _db?.Dispose();
+            if (_db is not null)
+            {
+                _logger.LogTrace("Closing connection to SQLite database at {SqliteCacheDbPath}", _config.CachePath);
+                _db.Close();
+                _db.Dispose();
+            }
         }
 
 #if NETCOREAPP3_0_OR_GREATER
@@ -89,6 +95,7 @@ namespace NeoSmart.Caching.Sqlite
 
             if (_db is not null)
             {
+                _logger.LogTrace("Closing connection to SQLite database at {SqliteCacheDbPath}", _config.CachePath);
                 await _db.CloseAsync();
                 await _db.DisposeAsync();
             }
@@ -155,8 +162,12 @@ namespace NeoSmart.Caching.Sqlite
                     }
                     else
                     {
-                        db?.Dispose();
-                        db?.Close();
+                        if (db is not null)
+                        {
+                            _logger.LogTrace("Closing connection to SQLite database at {SqliteCacheDbPath}", _config.CachePath);
+                            db.Close();
+                            db.Dispose();
+                        }
 
                         _logger.LogInformation("Deleting existing incompatible cache db file {CachePath}", _config.CachePath);
                         System.IO.File.Delete(_config.CachePath);
