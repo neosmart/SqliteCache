@@ -327,24 +327,24 @@ namespace NeoSmart.Caching.Sqlite
 #endif
 #endregion
 
-        public byte[] Get(string key)
+        public byte[]? Get(string key)
         {
-            return (byte[]) Commands.Use(Operation.Get, cmd =>
+            return (byte[]?) Commands.Use(Operation.Get, cmd =>
             {
                 cmd.Parameters.AddWithValue("@key", key);
                 cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
                 return cmd.ExecuteScalar();
-            })!;
+            });
         }
 
-        public async Task<byte[]> GetAsync(string key, CancellationToken cancel = default)
+        public async Task<byte[]?> GetAsync(string key, CancellationToken cancel = default)
         {
-            return (byte[]) (await Commands.UseAsync(Operation.Get, cmd =>
+            return (byte[]?) await Commands.UseAsync(Operation.Get, cmd =>
             {
                 cmd.Parameters.AddWithValue("@key", key);
                 cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
                 return cmd.ExecuteScalarAsync(cancel)!;
-            }))!;
+            });
         }
 
         public void Refresh(string key)
