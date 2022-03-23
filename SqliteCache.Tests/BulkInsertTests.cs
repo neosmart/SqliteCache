@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
@@ -122,6 +123,34 @@ namespace NeoSmart.Caching.Sqlite.Tests
                 Assert.IsNotNull(item2);
 
                 CollectionAssert.AreEqual(item2, DefaultEncoding.GetBytes("test two"));
+            }
+        }
+
+        [TestMethod]
+        public void LargeScaleBulkTests()
+        {
+            using (var cache = CreateDefault(true))
+            {
+                const int count = 100_000;
+
+                var testObject = new List<KeyValuePair<string, byte[]>>();
+                for (var n = 0; n < count; n++)
+                {
+                    testObject.Add(new KeyValuePair<string, byte[]>($"item{n+1}", DefaultEncoding.GetBytes($"value{n+1}")));
+                }
+
+                cache.SetBulk(testObject, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpiration = DateTimeOffset.UtcNow.AddDays(1)
+                });
+
+                var value1 = cache.Get("item1");
+                Assert.IsNotNull(value1);
+                CollectionAssert.AreEqual(DefaultEncoding.GetBytes("value1"), value1);
+
+                var lastValue = cache.Get($"item{count}");
+                Assert.IsNotNull(lastValue);
+                CollectionAssert.AreEqual(DefaultEncoding.GetBytes($"value{count}"), lastValue);
             }
         }
     }
