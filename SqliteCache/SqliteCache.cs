@@ -365,11 +365,16 @@ namespace NeoSmart.Caching.Sqlite
             cmd.Parameters.AddWithValue("@key", key);
             cmd.Parameters.AddWithValue("@value", value);
 
-            AddExpirationParameters(cmd, options);
+            var expirationValues = GetExpirationValues(options);
+
+            cmd.Parameters.AddWithValue("@expiry", expirationValues.expiry?.Ticks ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@renewal", expirationValues.renewal?.Ticks ?? (object)DBNull.Value);
         }
 
         private void CreateBulkInsert(DbCommand cmd, IEnumerable<KeyValuePair<string, byte[]>> keyValues, DistributedCacheEntryOptions options)
         {
+            var expirationValues = GetExpirationValues(options);
+
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(DbCommands.Commands[(int)Operation.BulkInsert]);
             int i = 0;
@@ -383,12 +388,13 @@ namespace NeoSmart.Caching.Sqlite
             sb.Remove(sb.Length - 1, 1);
             sb.Append(";");
 
-            AddExpirationParameters(cmd, options);
+            cmd.Parameters.AddWithValue("@expiry", expirationValues.expiry?.Ticks ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@renewal", expirationValues.renewal?.Ticks ?? (object)DBNull.Value);
 
             cmd.CommandText = sb.ToString();
         }
 
-        private void AddExpirationParameters(DbCommand cmd, DistributedCacheEntryOptions options)
+        private (DateTimeOffset? expiry, TimeSpan? renewal) GetExpirationValues(DistributedCacheEntryOptions options)
         {
             DateTimeOffset? expiry = null;
             TimeSpan? renewal = null;
@@ -409,8 +415,7 @@ namespace NeoSmart.Caching.Sqlite
                 expiry = (expiry ?? DateTimeOffset.UtcNow) + renewal;
             }
 
-            cmd.Parameters.AddWithValue("@expiry", expiry?.Ticks ?? (object) DBNull.Value);
-            cmd.Parameters.AddWithValue("@renewal", renewal?.Ticks ?? (object) DBNull.Value);
+            return (expiry, renewal);
         }
 
         public void Set(string key, byte[] value, DistributedCacheEntryOptions options)
@@ -458,6 +463,51 @@ namespace NeoSmart.Caching.Sqlite
             {
                 CreateBulkInsert(cmd, keyValues, options);
                 return cmd.ExecuteNonQueryAsync(cancel);
+            });
+        }
+
+        public void SetBulk(IEnumerable<KeyValuePair<string, byte[]?>> keyValues, DistributedCacheEntryOptions options,
+            CancellationToken cancel = default)
+        {
+            var expirationValues = GetExpirationValues(options);
+            var expiryParamValue = expirationValues.expiry?.Ticks ?? (object) DBNull.Value;
+            var renewalParamValue = expirationValues.renewal?.Ticks ?? (object)DBNull.Value;
+
+            var keyValuesArray = keyValues.ToArray(); // prevent possible multiple enumeration
+            
+            Commands.Use(Operation.BulkInsert, cmd =>
+            {
+                using var transaction = cmd.Connection?.BeginTransaction();
+                cmd.Transaction = transaction;
+                cmd.CommandText += " ($key, $val, $expiry, $renewal);";
+                
+                var keyParam = cmd.CreateParameter();
+                keyParam.ParameterName = "$key";
+                cmd.Parameters.Add(keyParam);
+
+                var valParam = cmd.CreateParameter();
+                valParam.ParameterName = "$val";
+                cmd.Parameters.Add(valParam);
+
+                var expiryParam = cmd.CreateParameter();
+                expiryParam.ParameterName = "$expiry";
+                cmd.Parameters.Add(expiryParam);
+
+                var renewalParam = cmd.CreateParameter();
+                renewalParam.ParameterName = "$renewal";
+                cmd.Parameters.Add(renewalParam);
+
+                foreach (var row in keyValuesArray)
+                {
+                    keyParam.Value = row.Key;
+                    valParam.Value = row.Value;
+                    expiryParam.Value = expiryParamValue;
+                    renewalParam.Value = renewalParamValue;
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                transaction?.Commit();
             });
         }
 
