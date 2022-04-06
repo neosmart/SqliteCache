@@ -432,12 +432,28 @@ namespace NeoSmart.Caching.Sqlite
             });
         }
 
+        public void SetBulk(IEnumerable<KeyValuePair<string, byte[]>> keyValues, DistributedCacheEntryOptions options)
+        {
+            if (keyValues is null || !keyValues.Any())
+            {
+                return;
+            }
+
+            Commands.Use(Operation.BulkInsert, cmd =>
+            {
+                CreateBulkInsert(cmd, keyValues, options);
+                return cmd.ExecuteNonQuery();
+            });
+        }
+
         public Task SetBulkAsync(IEnumerable<KeyValuePair<string, byte[]>> keyValues, DistributedCacheEntryOptions options,
             CancellationToken cancel = default)
         {
-            if (keyValues == null || !keyValues.Any()) {
-              return Task.CompletedTask;
+            if (keyValues is null || !keyValues.Any())
+            {
+                return Task.CompletedTask;
             }
+
             return Commands.UseAsync(Operation.BulkInsert, cmd =>
             {
                 CreateBulkInsert(cmd, keyValues, options);
