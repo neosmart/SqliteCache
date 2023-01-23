@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0;net6.0;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0;net6.0;net7.0;</TargetFrameworks>
     <LangVersion>9.0</LangVersion>
     <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
-    <Version>6.0.1</Version>
+    <Version>7.0.1</Version>
     <Nullable>enable</Nullable>
     <Authors>Mahmoud Al-Qudsi, neosmart, mqudsi</Authors>
     <Company>NeoSmart Technologies</Company>
@@ -18,6 +18,9 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>idistributedcache, cache, sqlite, sqlitecache, distributed, aspnetcore, asp, core, performance</PackageTags>
     <PackageReleaseNotes>
+Version 7.0:
+- Updates all Entity Framework and Microsoft Extension dependencies to v7.x
+
 Version 6.0:
 - Updates all Entity Framework and Microsoft Extension dependencies to v6.x
 
@@ -55,11 +58,11 @@ Version 3.1:
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.0.7" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="7.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.0" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.4" />
   </ItemGroup>
 
   <ItemGroup>
