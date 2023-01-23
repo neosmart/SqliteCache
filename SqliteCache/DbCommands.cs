@@ -10,6 +10,7 @@ namespace NeoSmart.Caching.Sqlite
         Get,
         Refresh,
         BulkInsert,
+        Clear
     }
 
     static class DbCommands
@@ -56,6 +57,9 @@ namespace NeoSmart.Caching.Sqlite
 
             Commands[(int)Operation.BulkInsert] =
                 "INSERT OR REPLACE INTO cache (key, value, expiry, renewal) VALUES ";
+
+            Commands[(int)Operation.Clear] =
+                "DELETE FROM cache ";
 
 #if DEBUG
             for (int i = 0; i < Count; ++i)

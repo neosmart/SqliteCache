@@ -388,6 +388,14 @@ namespace NeoSmart.Caching.Sqlite
             cmd.CommandText = sb.ToString();
         }
 
+        public void Clear()
+        {
+            Commands.Use(Operation.Clear, cmd =>
+            {
+                cmd.ExecuteNonQuery();
+            });
+        }
+
         private void AddExpirationParameters(DbCommand cmd, DistributedCacheEntryOptions options)
         {
             DateTimeOffset? expiry = null;
