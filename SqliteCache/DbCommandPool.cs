@@ -50,63 +50,94 @@ namespace NeoSmart.Caching.Sqlite
             });
         }
 
-        public R Use<R>(Operation type, Func<SqliteCommand, R> handler)
+        public R Use<R>(Func<SqliteConnection, R> handler)
         {
             if (!_connections.TryTake(out var db))
             {
-                _logger.LogTrace("Adding a new connection to the connection pool", type);
+                _logger.LogTrace("Adding a new connection to the connection pool");
                 db = new SqliteConnection(_connectionString);
                 _logger.LogTrace("Opening connection to {SqliteCacheDbPath}", _connectionString);
                 db.Open();
             }
 
-            var pool = _commands[(int)type];
-            if (!pool.TryTake(out var command))
-            {
-                _logger.LogTrace("Adding a new {DbCommand} command to the command pool", type);
-                command = new SqliteCommand(DbCommands.Commands[(int)type], db);
-            }
-
             try
             {
-                command.Connection = db;
-                return handler(command);
+                return handler(db);
             }
             finally
             {
-                command.Parameters.Clear();
-                pool.Add(command);
                 _connections.Add(db);
             }
         }
 
-        public async Task<R> UseAsync<R>(Operation type, Func<SqliteCommand, Task<R>> handler)
+        public R Use<R>(Operation type, Func<SqliteCommand, R> handler)
+        {
+            return Use((conn) =>
+            {
+                var pool = _commands[(int)type];
+                if (!pool.TryTake(out var command))
+                {
+                    _logger.LogTrace("Adding a new {DbCommand} command to the command pool", type);
+                    command = new SqliteCommand(DbCommands.Commands[(int)type], conn);
+                }
+
+                try
+                {
+                    command.Connection = conn;
+                    return handler(command);
+                }
+                finally
+                {
+                    command.Connection = null;
+                    command.Parameters.Clear();
+                    pool.Add(command);
+                }
+            });
+        }
+
+        public async Task<R> UseAsync<R>(Func<SqliteConnection, Task<R>> handler)
         {
             if (!_connections.TryTake(out var db))
             {
-                _logger.LogTrace("Adding a new connection to the connection pool", type);
+                _logger.LogTrace("Adding a new connection to the connection pool");
                 db = new SqliteConnection(_connectionString);
                 _logger.LogTrace("Opening connection to {SqliteCacheDbPath}", _connectionString);
                 await db.OpenAsync();
             }
 
-            var pool = _commands[(int)type];
-            if (!pool.TryTake(out var command))
-            {
-                _logger.LogTrace("Adding a new {DbCommand} command to the command pool", type);
-                command = new SqliteCommand(DbCommands.Commands[(int)type], db);
-            }
-
             try
             {
-                return await handler(command);
+                return await handler(db);
             }
             finally
             {
-                command.Parameters.Clear();
-                pool.Add(command);
                 _connections.Add(db);
             }
+        }
+
+        public Task<R> UseAsync<R>(Operation type, Func<SqliteCommand, Task<R>> handler)
+        {
+            return UseAsync(async (conn) =>
+            {
+                var pool = _commands[(int)type];
+                if (!pool.TryTake(out var command))
+                {
+                    _logger.LogTrace("Adding a new {DbCommand} command to the command pool", type);
+                    command = new SqliteCommand(DbCommands.Commands[(int)type], conn);
+                }
+
+                try
+                {
+                    command.Connection = conn;
+                    return await handler(command);
+                }
+                finally
+                {
+                    command.Connection = null;
+                    command.Parameters.Clear();
+                    pool.Add(command);
+                }
+            });
         }
 
         public void Dispose()
