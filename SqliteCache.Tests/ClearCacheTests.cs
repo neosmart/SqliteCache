@@ -1,18 +1,13 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NeoSmart.Caching.Sqlite.Tests
 {
-
     [TestClass]
     public class ClearCacheTests : IDisposable
     {
-        public static readonly Encoding DefaultEncoding = new UTF8Encoding(false);
         private readonly SqliteCacheOptions Configuration = new SqliteCacheOptions()
         {
             MemoryOnly = false,
@@ -21,7 +16,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
 
         public void Dispose()
         {
-            var logger = new TestLogger<SqliteCache>();
+            var logger = new TestLogger<ClearCacheTests>();
             logger.LogInformation("Delete db at path {DbPath}", Configuration.CachePath);
             try
             {
@@ -43,13 +38,16 @@ namespace NeoSmart.Caching.Sqlite.Tests
         }
 
         [TestMethod]
-        public void ClearCacheTest()
+        public void ItemsRemovedAfterClear()
         {
             using (var cache = CreateDefault(true))
             {
-                cache.Set("one", DefaultEncoding.GetBytes("foo"), new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddDays(1)));
+                var expiry = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddDays(1));
+                cache.SetString("one", "foo", expiry);
+                cache.SetString("two", "bar", expiry);
 
-                cache.Set("two", DefaultEncoding.GetBytes("bar"), new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddDays(1)));
+                Assert.AreEqual(cache.GetString("one"), "foo");
+                Assert.AreEqual(cache.GetString("two"), "bar");
 
                 // Test and check
                 cache.Clear();
@@ -59,16 +57,6 @@ namespace NeoSmart.Caching.Sqlite.Tests
 
                 var item2 = cache.Get("two");
                 Assert.IsNull(item2);
-            }
-
-            // Check persistence
-            using (var cache = CreateDefault(true))
-            {
-                var bytes = cache.Get("firstItem");
-                Assert.IsNull(bytes);
-
-                bytes = cache.Get("secondItem");
-                Assert.IsNull(bytes);
             }
         }
     }
