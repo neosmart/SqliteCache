@@ -25,7 +25,7 @@ namespace NeoSmart.Caching.Sqlite
         {
             Commands = new string[Count];
 
-            Commands[(int) Operation.Insert] =
+            Commands[(int)Operation.Insert] =
                 "INSERT OR REPLACE INTO cache (key, value, expiry, renewal) " +
                 "VALUES (@key, @value, @expiry, @renewal)";
 
