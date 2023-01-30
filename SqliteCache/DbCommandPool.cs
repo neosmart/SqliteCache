@@ -50,7 +50,7 @@ namespace NeoSmart.Caching.Sqlite
             });
         }
 
-        private R Use<R>(Func<SqliteConnection, R> handler)
+        public R Use<R>(Func<SqliteConnection, R> handler)
         {
             if (!_connections.TryTake(out var db))
             {

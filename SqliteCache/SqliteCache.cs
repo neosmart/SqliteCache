@@ -390,9 +390,11 @@ namespace NeoSmart.Caching.Sqlite
 
         public void Clear()
         {
-            Commands.Use(Operation.Clear, cmd =>
+            Commands.Use(conn =>
             {
+                using var cmd = new DbCommand("DELETE FROM cache WHERE 1=1;", conn);
                 cmd.ExecuteNonQuery();
+                return true;
             });
         }
 
