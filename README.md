@@ -85,6 +85,29 @@ public class FooModel(DbContext db, IDistributedCache cache)
 }
 ```
 
+To take advantage of SqliteCache-specific features or functionality that aren't exposed via the `IDistributedCache` façade, you'll need to inject `SqliteCache` into your classes/methods rather than `IDistributedCache`. For example, to globally clear the cache after performing some operation:
+
+```csharp
+// using NeoSmart.Caching.Sqlite;
+public class BarModel(DbContext db, SqliteCache cache)
+{
+    _db = db;
+    _cache = cache;
+}
+
+public ActionResult OnPostAsync()
+{
+    ...
+    await _db.SomethingDestructiveAsync();
+
+    // We need to invalidate all the cache, since it's too hard to
+    // account for the changes this operation caused for legacy reasons.
+    await _cache.ClearAsync();
+
+    ...
+}
+```
+
 ## License
 
 SqliteCache is developed and maintained by Mahmoud Al-Qudsi of NeoSmart Technologies. The project is
