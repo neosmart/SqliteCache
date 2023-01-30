@@ -102,7 +102,7 @@ namespace NeoSmart.Caching.Sqlite
                 }
 
                 // Check for correct version
-                using (var cmd = new DbCommand(@"SELECT value FROM meta WHERE key = ""version""", db))
+                using (var cmd = new DbCommand("SELECT value FROM meta WHERE key = 'version'", db))
                 {
                     var result = (long)cmd.ExecuteScalar()!;
                     if (result != SchemaVersion)
@@ -185,8 +185,8 @@ namespace NeoSmart.Caching.Sqlite
                 using (var cmd = new DbCommand(
                     $"INSERT INTO meta (key, value) " +
                     $"VALUES " +
-                    $@"(""version"", {SchemaVersion}), " +
-                    $@"(""created"", {DateTimeOffset.UtcNow.Ticks})", db))
+                    $"('version', {SchemaVersion}), " +
+                    $"('created', {DateTimeOffset.UtcNow.Ticks})", db))
                 {
                     cmd.Transaction = transaction;
                     cmd.ExecuteNonQuery();
@@ -215,7 +215,7 @@ namespace NeoSmart.Caching.Sqlite
                 }
 
                 // Check for correct version
-                using (var cmd = new DbCommand(@"SELECT value FROM meta WHERE key = ""version""", db))
+                using (var cmd = new DbCommand("SELECT value FROM meta WHERE key = 'version'", db))
                 {
                     var result = (long)await cmd.ExecuteScalarAsync(cancel);
                     if (result != SchemaVersion)
@@ -290,8 +290,8 @@ namespace NeoSmart.Caching.Sqlite
                 using (var cmd = new DbCommand(
                     $"INSERT INTO meta (key, value) " +
                     $"VALUES " +
-                    $@"(""version"", {SchemaVersion}), " +
-                    $@"(""created"", {DateTimeOffset.UtcNow.Ticks})" , _db))
+                    $"('version', {SchemaVersion}), " +
+                    $"('created', {DateTimeOffset.UtcNow.Ticks})" , _db))
                 {
                     cmd.Transaction = transaction;
                     await cmd.ExecuteNonQueryAsync(cancel);
