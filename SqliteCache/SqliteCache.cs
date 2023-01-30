@@ -398,6 +398,16 @@ namespace NeoSmart.Caching.Sqlite
             });
         }
 
+        public Task ClearAsync(CancellationToken cancel = default)
+        {
+            return Commands.UseAsync(async conn =>
+            {
+                using var cmd = new DbCommand("DELETE FROM cache WHERE 1=1;", conn);
+                await cmd.ExecuteNonQueryAsync(cancel);
+                return true;
+            });
+        }
+
         private void AddExpirationParameters(DbCommand cmd, DistributedCacheEntryOptions options)
         {
             DateTimeOffset? expiry = null;
