@@ -5,19 +5,24 @@
     <LangVersion>9.0</LangVersion>
     <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
-    <Version>6.0.1</Version>
+    <Version>6.1.0-preview1</Version>
     <Nullable>enable</Nullable>
     <Authors>Mahmoud Al-Qudsi, neosmart, mqudsi</Authors>
     <Company>NeoSmart Technologies</Company>
     <Product>SqliteCache</Product>
     <Description>An SQLite-backed IDistributedCache cache implementation for ASP.NET Core. Fast, transparent, persistent caching.</Description>
-    <Copyright>NeoSmart Technologies 2019-2022</Copyright>
+    <Copyright>NeoSmart Technologies 2019-2023</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>idistributedcache, cache, sqlite, sqlitecache, distributed, aspnetcore, asp, core, performance</PackageTags>
     <PackageReleaseNotes>
+Version 6.1:
+- Add methods to clear the cache (SqliteCache.Clear() and SqliteCache.ClearAsync())
+- SQLitePCLRaw upgraded to 2.1.4
+- Compatible w/ SQLite builds compiled with SQLITE_DSQ=0
+
 Version 6.0:
 - Updates all Entity Framework and Microsoft Extension dependencies to v6.x
 
