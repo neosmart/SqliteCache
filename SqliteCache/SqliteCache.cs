@@ -302,7 +302,7 @@ namespace NeoSmart.Caching.Sqlite
 #endif
         #endregion
 
-        public byte[] Get(string key)
+        public byte[]? Get(string key)
         {
             return (byte[])Commands.Use(Operation.Get, cmd =>
             {
@@ -312,7 +312,7 @@ namespace NeoSmart.Caching.Sqlite
             })!;
         }
 
-        public async Task<byte[]> GetAsync(string key, CancellationToken cancel = default)
+        public async Task<byte[]?> GetAsync(string key, CancellationToken cancel = default)
         {
             return (byte[])(await Commands.UseAsync(Operation.Get, cmd =>
             {
