@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0;net6.0;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
     <LangVersion>9.0</LangVersion>
     <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
-    <Version>6.1.0</Version>
+    <Version>7.0.0-preview1</Version>
     <Nullable>enable</Nullable>
     <Authors>Mahmoud Al-Qudsi, neosmart, mqudsi</Authors>
     <Company>NeoSmart Technologies</Company>
@@ -18,6 +18,14 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>idistributedcache, cache, sqlite, sqlitecache, distributed, aspnetcore, asp, core, performance</PackageTags>
     <PackageReleaseNotes>
+Version 7.0:
+- SqliteCache no longer depends on SQLitePCLRaw.bundle_green.
+
+  ASP.NET users do not have to change anything, but other .NET Core users will need to install either
+  SQLitePCLRaw.bundle_green and call `SQLitePCL.Batteries.Init()` before instantiating SqliteCache,
+  or else install the correct SQLitePCLRaw.provider.xxx version that matches the target platform and call
+  `SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_whatever())` before using SqliteCache.
+
 Version 6.1:
 - Add methods to clear the cache (SqliteCache.Clear() and SqliteCache.ClearAsync())
 - SQLitePCLRaw upgraded to 2.1.4
@@ -64,7 +72,8 @@ Version 3.1:
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.4" />
+    <!--<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.4" />-->
+    <PackageReference Include="SQLitePCLRaw.core" Version="2.1.4" />
   </ItemGroup>
 
   <ItemGroup>

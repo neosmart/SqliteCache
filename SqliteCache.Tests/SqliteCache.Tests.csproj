@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
     <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,7 +24,6 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Version="1.0.3" />
-    <PackageReference Include="SQlitePCLRaw.bundle_e_sqlite3" PrivateAssets="All" Version="2.1.4" />
   </ItemGroup>
 
 </Project>

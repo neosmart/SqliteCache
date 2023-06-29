@@ -10,6 +10,13 @@ namespace NeoSmart.Caching.Sqlite.Tests
     [TestClass]
     public class BasicTests : IDisposable
     {
+        [AssemblyInitialize]
+        public static void SetSqliteProvider(TestContext _)
+        {
+            // SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_e_sqlite3());
+            SQLitePCL.Batteries_V2.Init();
+        }
+
         public static readonly Encoding DefaultEncoding = new UTF8Encoding(false);
         private readonly SqliteCacheOptions Configuration = new SqliteCacheOptions()
         {
