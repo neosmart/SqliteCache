@@ -9,13 +9,17 @@ namespace NeoSmart.Caching.Sqlite
         SqliteCacheOptions IOptions<SqliteCacheOptions>.Value => this;
 
         /// <summary>
+        /// Configures SQLite to use a temporary (non-persistent) memory-backed database. Defaults to <c>false</c>.
+        /// <br/>
         /// Takes precedence over <see cref="CachePath"/>
         /// </summary>
         public bool MemoryOnly { get; set; } = false;
 
         private string _cachePath = "SqliteCache.db";
         /// <summary>
-        /// Only if <see cref="MemoryOnly" is <c>false</c> />
+        /// The path where the SQLite database should be persisted. Must have read/write permissions; does not need to already exist.
+        /// <br/>
+        /// Used only if <see cref="MemoryOnly" /> is <c>false</c>.
         /// </summary>
         public string CachePath
         {
