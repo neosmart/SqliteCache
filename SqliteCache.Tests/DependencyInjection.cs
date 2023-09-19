@@ -1,6 +1,8 @@
+#if NETCOREAPP1_0_OR_GREATER
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NeoSmart.Caching.Sqlite.AspNetCore;
 using System;
 
 namespace NeoSmart.Caching.Sqlite.Tests
@@ -45,3 +47,4 @@ namespace NeoSmart.Caching.Sqlite.Tests
         }
     }
 }
+#endif

@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqliteCache.AspNetCore", "SqliteCache.AspNetCore\SqliteCache.AspNetCore.csproj", "{BD7FAF15-DB65-4782-BE73-7024DF8C4068}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1B6F63DC-522C-4FD1-BF5D-B853163A803E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B6F63DC-522C-4FD1-BF5D-B853163A803E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B6F63DC-522C-4FD1-BF5D-B853163A803E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD7FAF15-DB65-4782-BE73-7024DF8C4068}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD7FAF15-DB65-4782-BE73-7024DF8C4068}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD7FAF15-DB65-4782-BE73-7024DF8C4068}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD7FAF15-DB65-4782-BE73-7024DF8C4068}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

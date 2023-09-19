@@ -2,21 +2,17 @@ using System;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace NeoSmart.Caching.Sqlite
+namespace NeoSmart.Caching.Sqlite.AspNetCore
 {
     public static class SqliteCacheServiceCollectionExtensions
     {
         /// <summary>
         /// Registers <c>SqliteCache</c> as a dependency-injected singleton, available
         /// both as <c>IDistributedCache</c> and <c>SqliteCache</c>.
-        /// <br /><br/>
-        /// If you're using ASP.NET Core, install <c>NeoSmart.Caching.Sqlite.AspNetCore</c>
-        /// and add <c>using namespace NeoSmart.Caching.Sqlite.AspNetCore</c> to get a version
-        /// of this method that does not require the <c>sqlite3Provider</c> parameter.
         /// </summary>
         /// <param name="services"></param>
         public static IServiceCollection AddSqliteCache(this IServiceCollection services,
-            Action<SqliteCacheOptions> setupAction, SQLitePCL.ISQLite3Provider sqlite3Provider)
+            Action<SqliteCacheOptions> setupAction)
         {
             if (services == null)
             {
@@ -28,6 +24,7 @@ namespace NeoSmart.Caching.Sqlite
                 throw new ArgumentNullException(nameof(setupAction));
             }
 
+            SQLitePCL.Batteries_V2.Init();
             services.AddOptions();
             services.AddSingleton<SqliteCache>();
             services.AddSingleton<IDistributedCache, SqliteCache>(services => services.GetRequiredService<SqliteCache>());
@@ -38,10 +35,6 @@ namespace NeoSmart.Caching.Sqlite
         /// <summary>
         /// Registers <c>SqliteCache</c> as a dependency-injected singleton, available
         /// both as <c>IDistributedCache</c> and <c>SqliteCache</c>.
-        /// <br /><br/>
-        /// If you're using ASP.NET Core, install <c>NeoSmart.Caching.Sqlite.AspNetCore</c>
-        /// and add <c>using namespace NeoSmart.Caching.Sqlite.AspNetCore</c> to get a version
-        /// of this method that does not require the <c>sqlite3Provider</c> parameter.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="path">The path where the SQLite database should be stored. It
@@ -49,9 +42,9 @@ namespace NeoSmart.Caching.Sqlite
         /// directory. Make sure the application has RW access at runtime.)</param>
         /// <returns></returns>
         public static IServiceCollection AddSqliteCache(this IServiceCollection services,
-            string path, SQLitePCL.ISQLite3Provider sqlite3Provider)
+            string path)
         {
-            return AddSqliteCache(services, options => options.CachePath = path, sqlite3Provider);
+            return AddSqliteCache(services, options => options.CachePath = path);
         }
     }
 }

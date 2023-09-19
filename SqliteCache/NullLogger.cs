@@ -21,7 +21,7 @@ namespace NeoSmart.Caching.Sqlite
             return false;
         }
 
-        public IDisposable BeginScope<TState>(TState state)
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
         {
             return new NullDisposable();
         }

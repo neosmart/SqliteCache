@@ -1,7 +1,7 @@
 # SqliteCache for ASP.NET Core
 
 [SqliteCache](https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core) is a persistent cache
-implementing `IDistributedCache` for ASP.NET Core projects.
+implementing `IDistributedCache` for .NET and ASP.NET Core projects.
 
 SqliteCache uses a locally stored SQLite database file (taking advantage of SQLite's battle-tested
 safe multi-threaded access features) to replicate persistent caching, allowing developers to mimic
@@ -37,6 +37,16 @@ follows:
 Install-Package NeoSmart.Caching.Sqlite
 ```
 
+If using this in an ASP.NET Core project, install NeoSmart.Caching.Sqlite.AspNetCore to get a 
+convenient helper method for dependency injection (used below):
+
+```
+Install-Package NeoSmart.Caching.Sqlite.AspNetCore
+```
+
+If you install `NeoSmart.Caching.Sqlite.AspNetCore` you do not need to manually install 
+`NeoSmart.Caching.Sqlite` as it it will be installed automatically/transitively.
+
 ## Usage
 
 Using SqliteCache is straight-forward, and should be extremely familiar for anyone that's configured
@@ -46,10 +56,10 @@ methods.*
 
 If using SqliteCache in an ASP.NET Core project, the SQLite-backed cache should be added as an
 `IDistributedCache` type by adding the following to your `ConfigureServices` method, by default
-located in `Startup.cs`:
+located in `Startup.cs`, after using the correct namespace `NeoSmart.Caching.Sqlite.AspNetCore`:
 
 ```csharp
-// using NeoSmart.Caching.Sqlite;
+// using NeoSmart.Caching.Sqlite.AspNetCore;
 
 public void ConfigureServices(IServiceCollection services)
 {
@@ -85,7 +95,9 @@ public class FooModel(DbContext db, IDistributedCache cache)
 }
 ```
 
-To take advantage of SqliteCache-specific features or functionality that aren't exposed via the `IDistributedCache` façade, you'll need to inject `SqliteCache` into your classes/methods rather than `IDistributedCache`. For example, to globally clear the cache after performing some operation:
+To take advantage of SqliteCache-specific features or functionality that aren't exposed via the 
+`IDistributedCache` façade, you'll need to inject `SqliteCache` into your classes/methods rather than 
+`IDistributedCache`. For example, to globally clear the cache after performing some operation:
 
 ```csharp
 // using NeoSmart.Caching.Sqlite;

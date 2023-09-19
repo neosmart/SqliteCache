@@ -26,4 +26,8 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Version="1.0.3" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' != 'net462'">
+    <ProjectReference Include="..\SqliteCache.AspNetCore\SqliteCache.AspNetCore.csproj" />
+  </ItemGroup>
+
 </Project>
