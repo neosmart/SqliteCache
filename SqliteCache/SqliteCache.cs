@@ -48,18 +48,22 @@ namespace NeoSmart.Caching.Sqlite
             // This has to be after the call to Connect()
             if (_config.CleanupInterval.HasValue)
             {
-                _cleanupTimer = new Timer(_ =>
+                _cleanupTimer = new Timer(static state =>
                 {
-                    _logger.LogTrace("Beginning background cache cleanup");
-                    RemoveExpired();
-                    _logger.LogTrace("Completed background cache cleanup");
-                }, null, TimeSpan.Zero, _config.CleanupInterval.Value);
+                    var @this = (SqliteCache)state!;
+
+                    @this._logger.LogTrace("Beginning background cleanup of expired SQLiteCache items");
+                    @this.RemoveExpired();
+                }, this, TimeSpan.Zero, _config.CleanupInterval.Value);
             }
         }
 
+        // Must keep this in sync with DisposeAsync() below!
         public void Dispose()
         {
             _logger.LogTrace("Disposing SQLite cache database at {SqliteCacheDbPath}", _config.CachePath);
+
+            // Dispose the timer first, because it might still access other things until it's been disposed!
             _cleanupTimer?.Dispose();
             Commands.Dispose();
 
@@ -69,8 +73,12 @@ namespace NeoSmart.Caching.Sqlite
         }
 
 #if NETCOREAPP3_0_OR_GREATER
+        // Must keep this in sync with Dispose() above!
         public async ValueTask DisposeAsync()
         {
+            _logger.LogTrace("Disposing SQLite cache database at {SqliteCacheDbPath}", _config.CachePath);
+
+            // Dispose the timer first, because it might still access other things until it's been disposed!
             if (_cleanupTimer is not null)
             {
                 await _cleanupTimer.DisposeAsync();
