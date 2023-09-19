@@ -4,10 +4,9 @@
     <TargetFrameworks>net462;netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <IsPackable>false</IsPackable>
-
     <AssemblyName>NeoSmart.Caching.Sqlite.Tests</AssemblyName>
-
     <RootNamespace>NeoSmart.Caching.Sqlite.Tests</RootNamespace>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 
   <ItemGroup>
