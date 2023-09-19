@@ -16,7 +16,7 @@
     <PackageProjectUrl>https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>idistributedcache, cache, sqlite, sqlitecache, distributed, aspnetcore, asp, core, performance</PackageTags>
+    <PackageTags>idistributedcache, cache, sqlite, sqlitecache, distributed, aspnetcore, performance</PackageTags>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <PackageReleaseNotes>
 Version 7.0:
