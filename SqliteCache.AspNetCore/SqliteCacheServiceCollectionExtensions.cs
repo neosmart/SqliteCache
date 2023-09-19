@@ -14,12 +14,11 @@ namespace NeoSmart.Caching.Sqlite.AspNetCore
         public static IServiceCollection AddSqliteCache(this IServiceCollection services,
             Action<SqliteCacheOptions> setupAction)
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
-
-            if (setupAction == null)
+            else if (setupAction is null)
             {
                 throw new ArgumentNullException(nameof(setupAction));
             }

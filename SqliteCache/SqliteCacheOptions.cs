@@ -46,12 +46,12 @@ namespace NeoSmart.Caching.Sqlite
         {
             get
             {
-                var sb = new SqliteConnectionStringBuilder();
-                sb.DataSource = MemoryOnly
-                    ? ":memory:" : CachePath;
-                sb.Mode = MemoryOnly
-                    ? SqliteOpenMode.Memory : SqliteOpenMode.ReadWriteCreate;
-                sb.Cache = SqliteCacheMode.Shared;
+                var sb = new SqliteConnectionStringBuilder
+                {
+                    DataSource = MemoryOnly ? ":memory:" : CachePath,
+                    Mode = MemoryOnly ? SqliteOpenMode.Memory : SqliteOpenMode.ReadWriteCreate,
+                    Cache = SqliteCacheMode.Shared
+                };
 
                 return sb.ConnectionString;
             }

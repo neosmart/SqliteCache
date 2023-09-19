@@ -18,12 +18,11 @@ namespace NeoSmart.Caching.Sqlite
         public static IServiceCollection AddSqliteCache(this IServiceCollection services,
             Action<SqliteCacheOptions> setupAction, SQLitePCL.ISQLite3Provider sqlite3Provider)
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
-
-            if (setupAction == null)
+            else if (setupAction is null)
             {
                 throw new ArgumentNullException(nameof(setupAction));
             }
