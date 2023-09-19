@@ -17,7 +17,16 @@
     <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>idistributedcache, cache, sqlite, sqlitecache, distributed, aspnetcore, performance</PackageTags>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>NeoSmart.Caching.Sqlite.snk</AssemblyOriginatorKeyFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <PackageReleaseNotes>
 Version 7.0:
 - SqliteCache no longer depends on SQLitePCLRaw.bundle_green.
@@ -52,12 +61,6 @@ Version 3.1:
 - SqliteCache is now a sealed class to prevent dispose problems if derived
 - Version number aligns with .NET Core semantic versioning
 	</PackageReleaseNotes>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>NeoSmart.Caching.Sqlite.snk</AssemblyOriginatorKeyFile>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
