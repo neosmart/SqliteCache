@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <AssemblyName>NeoSmart.Caching.Sqlite.AspNetCore</AssemblyName>
@@ -13,6 +13,15 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Authors>Mahmoud Al-Qudsi, neosmart, mqudsi</Authors>
+    <Company>NeoSmart Technologies</Company>
+    <Description>ASP.NET Core dependency-injection integrations for NeoSmart.Caching.Sqlite</Description>
+    <Copyright>NeoSmart Technologies 2019-2023</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>idistributedcache, cache, sqlite, sqlitecache, aspnetcore</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
