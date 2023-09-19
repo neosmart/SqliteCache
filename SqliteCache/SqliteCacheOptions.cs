@@ -27,16 +27,15 @@ namespace NeoSmart.Caching.Sqlite
             set
             {
                 // User might have passed a connection string instead of a data source
-                if (value.StartsWith("Data Source=", StringComparison.InvariantCultureIgnoreCase))
+                if (value.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
                 {
                     value = value.Replace("Data Source=", "");
                 }
-                value = value.Trim();
                 if (value.Contains("=") || value.Contains("\""))
                 {
                     throw new ArgumentException("CachePath must be a path and not a connection string!");
                 }
-                _cachePath = value;
+                _cachePath = value.Trim();
             }
         }
 
