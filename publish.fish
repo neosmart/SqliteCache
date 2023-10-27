@@ -48,11 +48,11 @@ function publish_csproj
 		exit 1
 	end
 
-	if ! nuget push $nupkg
+	if ! nuget push $nupkg #-source https://int.nugettest.org
 		exit 1
 	end
 
-	if ! nuget push $snupkg
+	if ! nuget push $snupkg #-source https://int.nugettest.org
 		exit 1
 	end
 
@@ -63,4 +63,5 @@ if string match -qr -- . $argv[1]
 	publish_csproj $csproj
 else
 	publish_csproj ./SqliteCache/*.csproj
+	publish_csproj ./SqliteCache.AspNetCore/*.csproj
 end
