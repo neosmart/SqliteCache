@@ -1,13 +1,13 @@
 # SqliteCache for ASP.NET Core
 
-[SqliteCache](https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core) is a persistent cache
+[SqliteCache](https://neosmart.net/blog/sqlite-cache-for-asp-net-core) is a persistent cache
 implementing `IDistributedCache` for .NET and ASP.NET Core projects.
 
 SqliteCache uses a locally stored SQLite database file (taking advantage of SQLite's battle-tested
 safe multi-threaded access features) to replicate persistent caching, allowing developers to mimic
 the behavior of staging or production targets without all the overhead or hassle of a traditional
 `IDistributedCache` implementation. You can read more about its design and inspiration in [the
-official release post](https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core) on the NeoSmart
+official release post](https://neosmart.net/blog/sqlite-cache-for-asp-net-core) on the NeoSmart
 blog.
 
 ## Why `NeoSmart.Caching.Sqlite`?
@@ -37,8 +37,8 @@ follows:
 Install-Package NeoSmart.Caching.Sqlite
 ```
 
-If using this in an ASP.NET Core project, install NeoSmart.Caching.Sqlite.AspNetCore to get a 
-convenient helper method for dependency injection (used below):
+**If using this in an ASP.NET Core project**, you can install `NeoSmart.Caching.Sqlite.AspNetCore` (also
+or instead) to get a convenient helper method for dependency injection (used below):
 
 ```
 Install-Package NeoSmart.Caching.Sqlite.AspNetCore

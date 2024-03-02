@@ -6,7 +6,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>11</LangVersion>
-    <Version>7.0.2</Version>
+    <Version>8.0.0</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../SqliteCache/NeoSmart.Caching.Sqlite.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -16,9 +16,9 @@
     <Authors>Mahmoud Al-Qudsi, neosmart, mqudsi</Authors>
     <Company>NeoSmart Technologies</Company>
     <Description>ASP.NET Core dependency-injection integrations for NeoSmart.Caching.Sqlite</Description>
-    <Copyright>NeoSmart Technologies 2019-2023</Copyright>
+    <Copyright>NeoSmart Technologies 2019-2024</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core</PackageProjectUrl>
+    <PackageProjectUrl>https://neosmart.net/blog/sqlite-cache-for-asp-net-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>idistributedcache, cache, sqlite, sqlitecache, aspnetcore</PackageTags>
@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SqliteCache\SqliteCache.csproj" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.6" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8" />
   </ItemGroup>
 
 </Project>
