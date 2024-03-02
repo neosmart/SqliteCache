@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>NeoSmart.Caching.Sqlite.AspNetCore</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite.AspNetCore</RootNamespace>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <Nullable>enable</Nullable>
     <LangVersion>11</LangVersion>
     <Version>8.0.0</Version>
