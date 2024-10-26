@@ -1,10 +1,26 @@
 using System;
+using System.ComponentModel;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace NeoSmart.Caching.Sqlite.AspNetCore
 {
-    public static class SqliteCacheServiceCollectionExtensions
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public static class AspSqliteCacheServiceCollectionExtensions
+    {
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IServiceCollection AddSqliteCache(this IServiceCollection services,
+            Action<SqliteCacheOptions> setupAction)
+        {
+            return Sqlite.AspSqliteCacheServiceCollectionExtensions
+                .AddSqliteCache(services, setupAction);
+        }
+    }
+}
+
+namespace NeoSmart.Caching.Sqlite
+{
+    public static class AspSqliteCacheServiceCollectionExtensions
     {
         /// <summary>
         /// Registers <c>SqliteCache</c> as a dependency-injected singleton, available
