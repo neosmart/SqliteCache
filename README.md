@@ -44,8 +44,8 @@ or instead) to get a convenient helper method for dependency injection (used bel
 Install-Package NeoSmart.Caching.Sqlite.AspNetCore
 ```
 
-If you install `NeoSmart.Caching.Sqlite.AspNetCore` you do not need to manually install 
-`NeoSmart.Caching.Sqlite` as it it will be installed automatically/transitively.
+Note: If you install `NeoSmart.Caching.Sqlite.AspNetCore` you do not need to manually install
+`NeoSmart.Caching.Sqlite`, as it it will be installed automatically/transitively.
 
 ## Usage
 
@@ -56,16 +56,16 @@ methods.*
 
 If using SqliteCache in an ASP.NET Core project, the SQLite-backed cache should be added as an
 `IDistributedCache` type by adding the following to your `ConfigureServices` method, by default
-located in `Startup.cs`, after using the correct namespace `NeoSmart.Caching.Sqlite.AspNetCore`:
+located in `Startup.cs`, after using the correct namespace `NeoSmart.Caching.Sqlite`:
 
 ```csharp
-// using NeoSmart.Caching.Sqlite.AspNetCore;
+// using NeoSmart.Caching.Sqlite;
 
 public void ConfigureServices(IServiceCollection services)
 {
     ...
 
-    // Note: this *must* come before services.AddMvc()!
+    // Note: this *must* come before services.AddMvc() and/or services.AddRazorPages()!
     services.AddSqliteCache(options => {
         options.CachePath = @"C:\data\bazaar\cache.db";
     });
@@ -95,8 +95,8 @@ public class FooModel(DbContext db, IDistributedCache cache)
 }
 ```
 
-To take advantage of SqliteCache-specific features or functionality that aren't exposed via the 
-`IDistributedCache` façade, you'll need to inject `SqliteCache` into your classes/methods rather than 
+To take advantage of SqliteCache-specific features or functionality that aren't exposed via the
+`IDistributedCache` façade, you'll need to inject `SqliteCache` into your classes/methods rather than
 `IDistributedCache`. For example, to globally clear the cache after performing some operation:
 
 ```csharp
