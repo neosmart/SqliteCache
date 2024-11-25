@@ -72,10 +72,10 @@ Version 3.1:
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.0-rc.2.24474.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.0-rc.2.24473.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0-rc.2.24473.5" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.0-rc.2.24473.5" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.0" />
     <PackageReference Include="SQLitePCLRaw.core" Version="2.1.10" />
   </ItemGroup>
 
