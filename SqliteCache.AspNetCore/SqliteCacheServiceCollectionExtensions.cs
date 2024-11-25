@@ -9,6 +9,7 @@ namespace NeoSmart.Caching.Sqlite.AspNetCore
     public static class AspSqliteCacheServiceCollectionExtensions
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete("Use this method from the NeoSmart.Caching.Sqlite namespace directly")]
         public static IServiceCollection AddSqliteCache(this IServiceCollection services,
             Action<SqliteCacheOptions> setupAction)
         {
