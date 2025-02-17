@@ -71,8 +71,13 @@ namespace NeoSmart.Caching.Sqlite
                 // EventWaitHandle.Set(SafeWaitHandle) method, which is just a wrapper around Kernel32's
                 // SetEvent() -- all of which is to say, we can't use a ManualResetEventSlim here.
                 using var resetEvent = new ManualResetEvent(false);
-                _cleanupTimer.Dispose(resetEvent);
-                resetEvent.WaitOne();
+                // If the timer has already been disposed, it'll return false immediately without setting the
+                // event. Since we don't really protect against our own .Dispose() method being called twice
+                // (maybe in a race), we should handle this eventuality.
+                if (_cleanupTimer.Dispose(resetEvent))
+                {
+                    resetEvent.WaitOne();
+                }
             }
             Commands.Dispose();
 
