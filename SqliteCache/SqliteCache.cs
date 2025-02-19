@@ -95,14 +95,14 @@ namespace NeoSmart.Caching.Sqlite
             // Dispose the timer first, because it might still access other things until it's been disposed!
             if (_cleanupTimer is not null)
             {
-                await _cleanupTimer.DisposeAsync();
+                await _cleanupTimer.DisposeAsync().ConfigureAwait(false);
             }
 
-            await Commands.DisposeAsync();
+            await Commands.DisposeAsync().ConfigureAwait(false);
 
             _logger.LogTrace("Closing connection to SQLite database at {SqliteCacheDbPath}", _config.CachePath);
-            await _db.CloseAsync();
-            await _db.DisposeAsync();
+            await _db.CloseAsync().ConfigureAwait(false);
+            await _db.DisposeAsync().ConfigureAwait(false);
         }
 #endif
 
@@ -227,7 +227,7 @@ namespace NeoSmart.Caching.Sqlite
                 // Check for correct structure
                 using (var cmd = new DbCommand(@"SELECT COUNT(*) from sqlite_master", db))
                 {
-                    var result = (long)await cmd.ExecuteScalarAsync(cancel);
+                    var result = (long)await cmd.ExecuteScalarAsync(cancel).ConfigureAwait(false);
                     // We are expecting two tables and one additional index
                     if (result != 3)
                     {
@@ -239,7 +239,7 @@ namespace NeoSmart.Caching.Sqlite
                 // Check for correct version
                 using (var cmd = new DbCommand("SELECT value FROM meta WHERE key = 'version'", db))
                 {
-                    var result = (long)await cmd.ExecuteScalarAsync(cancel);
+                    var result = (long)await cmd.ExecuteScalarAsync(cancel).ConfigureAwait(false);
                     if (result != SchemaVersion)
                     {
                         _logger.LogWarning("Existing cache db has unsupported schema version {SchemaVersion}",
@@ -270,8 +270,8 @@ namespace NeoSmart.Caching.Sqlite
                     _logger.LogTrace("Found existing database at {CachePath}", _config.CachePath);
 
                     var db = new SqliteConnection(_config.ConnectionString);
-                    await db.OpenAsync();
-                    if (await CheckExistingDbAsync(db, cancel))
+                    await db.OpenAsync().ConfigureAwait(false);
+                    if (await CheckExistingDbAsync(db, cancel).ConfigureAwait(false))
                     {
                         // Everything checks out, we can use this as our cache db
                         _db = db;
@@ -289,8 +289,8 @@ namespace NeoSmart.Caching.Sqlite
                 if (_db == null)
                 {
                     _db = new DbConnection(_config.ConnectionString);
-                    await _db.OpenAsync();
-                    await InitializeAsync(cancel);
+                    await _db.OpenAsync().ConfigureAwait(false);
+                    await InitializeAsync(cancel).ConfigureAwait(false);
                 }
 
                 Commands = new DbCommandPool(_db, _logger);
@@ -307,7 +307,7 @@ namespace NeoSmart.Caching.Sqlite
                 using (var cmd = new DbCommand(Resources.TableInitCommand, _db))
                 {
                     cmd.Transaction = transaction;
-                    await cmd.ExecuteNonQueryAsync(cancel);
+                    await cmd.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
                 }
                 using (var cmd = new DbCommand(
                     $"INSERT INTO meta (key, value) " +
@@ -316,7 +316,7 @@ namespace NeoSmart.Caching.Sqlite
                     $"('created', {DateTimeOffset.UtcNow.Ticks})" , _db))
                 {
                     cmd.Transaction = transaction;
-                    await cmd.ExecuteNonQueryAsync(cancel);
+                    await cmd.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
                 }
                 transaction.Commit();
             }
@@ -341,7 +341,7 @@ namespace NeoSmart.Caching.Sqlite
                 cmd.Parameters.AddWithValue("@key", key);
                 cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
                 return cmd.ExecuteScalarAsync(cancel);
-            }))!;
+            }).ConfigureAwait(false))!;
         }
 
         public void Refresh(string key)
@@ -425,7 +425,7 @@ namespace NeoSmart.Caching.Sqlite
             return Commands.UseAsync(async conn =>
             {
                 using var cmd = new DbCommand("DELETE FROM cache WHERE 1=1;", conn);
-                await cmd.ExecuteNonQueryAsync(cancel);
+                await cmd.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
                 return true;
             });
         }
@@ -523,7 +523,7 @@ namespace NeoSmart.Caching.Sqlite
             {
                 cmd.Parameters.AddWithValue("@now", DateTimeOffset.UtcNow.Ticks);
                 return cmd.ExecuteScalarAsync(cancel);
-            }))!;
+            }).ConfigureAwait(false))!;
 
             if (removed > 0)
             {

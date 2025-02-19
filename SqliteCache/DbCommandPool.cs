@@ -102,12 +102,12 @@ namespace NeoSmart.Caching.Sqlite
                 _logger.LogTrace("Adding a new connection to the connection pool");
                 db = new SqliteConnection(_connectionString);
                 _logger.LogTrace("Opening connection to {SqliteCacheDbPath}", _connectionString);
-                await db.OpenAsync();
+                await db.OpenAsync().ConfigureAwait(false);
             }
 
             try
             {
-                return await handler(db);
+                return await handler(db).ConfigureAwait(false);
             }
             finally
             {
@@ -129,7 +129,7 @@ namespace NeoSmart.Caching.Sqlite
                 try
                 {
                     command.Connection = conn;
-                    return await handler(command);
+                    return await handler(command).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -165,14 +165,14 @@ namespace NeoSmart.Caching.Sqlite
             {
                 while (pool.TryTake(out var cmd))
                 {
-                    await cmd.DisposeAsync();
+                    await cmd.DisposeAsync().ConfigureAwait(false);
                 }
             }
 
             foreach (var conn in _connections)
             {
-                await conn.CloseAsync();
-                await conn.DisposeAsync();
+                await conn.CloseAsync().ConfigureAwait(false);
+                await conn.DisposeAsync().ConfigureAwait(false);
             }
         }
 #endif
