@@ -6,13 +6,13 @@
     <LangVersion>9.0</LangVersion>
     <AssemblyName>NeoSmart.Caching.Sqlite</AssemblyName>
     <RootNamespace>NeoSmart.Caching.Sqlite</RootNamespace>
-    <Version>9.0.0</Version>
+    <Version>9.0.1</Version>
     <Nullable>enable</Nullable>
     <Authors>Mahmoud Al-Qudsi, neosmart, mqudsi</Authors>
     <Company>NeoSmart Technologies</Company>
     <Product>SqliteCache</Product>
     <Description>An SQLite-backed IDistributedCache cache implementation for ASP.NET Core. Fast, transparent, persistent caching.</Description>
-    <Copyright>NeoSmart Technologies 2019-2024</Copyright>
+    <Copyright>NeoSmart Technologies 2019-2025</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
@@ -72,10 +72,10 @@ Version 3.1:
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.2" />
     <PackageReference Include="SQLitePCLRaw.core" Version="2.1.10" />
   </ItemGroup>
 
