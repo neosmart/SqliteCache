@@ -64,7 +64,21 @@ namespace NeoSmart.Caching.Sqlite
             _logger.LogTrace("Disposing SQLite cache database at {SqliteCacheDbPath}", _config.CachePath);
 
             // Dispose the timer first, because it might still access other things until it's been disposed!
-            _cleanupTimer?.Dispose();
+            if (_cleanupTimer is not null)
+            {
+                // Timer.Dispose(WaitHandle) ends up delegating to (the internal)
+                // TimerQueueTimer.Dispose(WaitHandle), which calls (the private)
+                // EventWaitHandle.Set(SafeWaitHandle) method, which is just a wrapper around Kernel32's
+                // SetEvent() -- all of which is to say, we can't use a ManualResetEventSlim here.
+                using var resetEvent = new ManualResetEvent(false);
+                // If the timer has already been disposed, it'll return false immediately without setting the
+                // event. Since we don't really protect against our own .Dispose() method being called twice
+                // (maybe in a race), we should handle this eventuality.
+                if (_cleanupTimer.Dispose(resetEvent))
+                {
+                    resetEvent.WaitOne();
+                }
+            }
             Commands.Dispose();
 
             _logger.LogTrace("Closing connection to SQLite database at {SqliteCacheDbPath}", _config.CachePath);
