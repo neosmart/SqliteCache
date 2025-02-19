@@ -119,5 +119,27 @@ namespace NeoSmart.Caching.Sqlite.Tests
                 Assert.IsNull(cache.Get("key"));
             }
         }
+
+        [TestMethod]
+        public void DoubleDispose()
+        {
+            using (var cache = CreateDefault(true))
+            {
+                cache.Dispose();
+            }
+        }
+
+#if NETCOREAPP3_0_OR_GREATER
+        [TestMethod]
+        public async Task AsyncDispose()
+        {
+            await using (var cache = CreateDefault(true))
+            {
+                await cache.SetAsync("foo", DefaultEncoding.GetBytes("hello"));
+                var bytes = await cache.GetAsync("foo");
+                CollectionAssert.AreEqual(bytes, DefaultEncoding.GetBytes("hello"));
+            }
+        }
+#endif
     }
 }
