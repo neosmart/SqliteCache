@@ -40,6 +40,11 @@ namespace NeoSmart.Caching.Sqlite
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public string SqliteEncryptionPassword { get; set; } = "";
+
+        /// <summary>
         /// Specifies how often expired items are removed in the background.
         /// Background eviction is disabled if set to <c>null</c>.
         /// </summary>
@@ -55,6 +60,10 @@ namespace NeoSmart.Caching.Sqlite
                     Mode = MemoryOnly ? SqliteOpenMode.Memory : SqliteOpenMode.ReadWriteCreate,
                     Cache = SqliteCacheMode.Shared
                 };
+                if (string.IsNullOrEmpty(SqliteEncryptionPassword))
+                {
+                    sb.Password = SqliteEncryptionPassword;
+                }
 
                 return sb.ConnectionString;
             }
