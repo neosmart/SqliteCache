@@ -120,6 +120,31 @@ public ActionResult OnPostAsync()
 }
 ```
 
+## Encryption
+To use SqliteCache with encryption make sure you are using the corresponding providers for your target framework.
+E.g. for Net481: 
+* https://www.nuget.org/packages/SQLitePCLRaw.provider.sqlcipher/2.0.4
+* https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlcipher/2.0.4
+* https://www.nuget.org/packages/sqlite-net-sqlcipher/1.8.116
+* https://www.nuget.org/packages/Microsoft.Data.Sqlite.Core/5.0.17
+
+And make sure to use the correct provider when registering Sqlite
+```csharp
+raw.SetProvider((ISQLite3Provider)new SQLite3Provider_e_sqlcipher());
+serviceCollectionAccess.AddSingleton<SqliteCache>();
+serviceCollectionAccess.AddSingleton<IDistributedCache, SqliteCache>(aServiceProvider => aServiceProvider.GetRequiredService<SqliteCache>());
+```
+
+then just configure SqliteCache with the PasswordOption
+```csharp
+serviceCollectionAccess.Configure<SqliteCacheOptions>(aSqliteCacheOptions =>
+{
+...
+    aSqliteCacheOptions.Password = password;
+...
+});
+```
+
 ## License
 
 SqliteCache is developed and maintained by Mahmoud Al-Qudsi of NeoSmart Technologies. The project is
