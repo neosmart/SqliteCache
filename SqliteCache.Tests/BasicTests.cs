@@ -38,19 +38,21 @@ namespace NeoSmart.Caching.Sqlite.Tests
             }
         }
 
-        private SqliteCache CreateDefault(bool persistent = true)
+        private SqliteCache CreateDefault(bool persistent = true, string password = null)
         {
             var logger = new TestLogger<SqliteCache>();
             logger.LogInformation("Creating a connection to db {DbPath}", Configuration.CachePath);
-            var cacheDb = new SqliteCache(Configuration with { MemoryOnly = !persistent }, logger);
+            var cacheDb = new SqliteCache(Configuration with { MemoryOnly = !persistent, SqliteEncryptionPassword = password}, logger);
 
             return cacheDb;
         }
 
-        [TestMethod]
-        public async Task BasicSetGet()
+        [DataTestMethod]
+        [DataRow(null)]
+        [DataRow("testPassword")]
+        public async Task BasicSetGet(string password)
         {
-            using (var cache = CreateDefault(true))
+            using (var cache = CreateDefault(true, password))
             {
                 var bytes = cache.Get("hello");
                 Assert.IsNull(bytes);
@@ -67,7 +69,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
             }
 
             // Check persistence
-            using (var cache = CreateDefault(true))
+            using (var cache = CreateDefault(true, password))
             {
                 var bytes = await cache.GetAsync("hello");
                 CollectionAssert.AreEqual(bytes, DefaultEncoding.GetBytes("hello"));
