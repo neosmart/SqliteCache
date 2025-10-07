@@ -123,10 +123,8 @@ public ActionResult OnPostAsync()
 ## Encryption
 To use SqliteCache with encryption make sure you are using the corresponding providers for your target framework.
 E.g. for Net481: 
-* https://www.nuget.org/packages/SQLitePCLRaw.provider.sqlcipher/2.0.4
-* https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlcipher/2.0.4
-* https://www.nuget.org/packages/sqlite-net-sqlcipher/1.8.116
-* https://www.nuget.org/packages/Microsoft.Data.Sqlite.Core/5.0.17
+* https://www.nuget.org/packages/SQLitePCLRaw.provider.sqlcipher/2.1.10
+* https://www.nuget.org/packages/SQLitePCLRaw.lib.e_sqlcipher/2.1.10
 
 And make sure to use the correct provider when registering Sqlite
 ```csharp
