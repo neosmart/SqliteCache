@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
@@ -47,7 +48,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
             return cacheDb;
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null)]
         [DataRow("testPassword")]
         public async Task BasicSetGet(string password)
@@ -77,9 +78,11 @@ namespace NeoSmart.Caching.Sqlite.Tests
         }
 
         [TestMethod]
-        public void ExpiredIgnored()
+        [DataRow(null)]
+        [DataRow("testPassword")]
+        public void ExpiredIgnored(string password)
         {
-            using (var cache = CreateDefault())
+            using (var cache = CreateDefault(true, password))
             {
                 cache.Set("hi there", DefaultEncoding.GetBytes("hello"),
                     new DistributedCacheEntryOptions()
@@ -90,9 +93,11 @@ namespace NeoSmart.Caching.Sqlite.Tests
         }
 
         [TestMethod]
-        public void ExpiredRenewal()
+        [DataRow(null)]
+        [DataRow("testPassword")]
+        public void ExpiredRenewal(string password)
         {
-            using (var cache = CreateDefault())
+            using (var cache = CreateDefault(true, password))
             {
                 cache.Set("hi there", DefaultEncoding.GetBytes("hello"),
                     new DistributedCacheEntryOptions()
@@ -106,12 +111,14 @@ namespace NeoSmart.Caching.Sqlite.Tests
         }
 
         [TestMethod]
-        public void ExpirationStoredInUtc()
+        [DataRow(null)]
+        [DataRow("testPassword")]
+        public void ExpirationStoredInUtc(string password)
         {
             var expiryUtc = DateTimeOffset.UtcNow.AddMinutes(-1);
             var expiryLocal = expiryUtc.ToOffset(TimeSpan.FromHours(5));
 
-            using (var cache = CreateDefault())
+            using (var cache = CreateDefault(true, password))
             {
                 cache.Set("key", DefaultEncoding.GetBytes("value"), new DistributedCacheEntryOptions
                 {
@@ -123,9 +130,11 @@ namespace NeoSmart.Caching.Sqlite.Tests
         }
 
         [TestMethod]
-        public void DoubleDispose()
+        [DataRow(null)]
+        [DataRow("testPassword")]
+        public void DoubleDispose(string password)
         {
-            using (var cache = CreateDefault(true))
+            using (var cache = CreateDefault(true, password))
             {
                 cache.Dispose();
             }
@@ -133,9 +142,11 @@ namespace NeoSmart.Caching.Sqlite.Tests
 
 #if NETCOREAPP3_0_OR_GREATER
         [TestMethod]
-        public async Task AsyncDispose()
+        [DataRow(null)]
+        [DataRow("testPassword")]
+        public async Task AsyncDispose(string password)
         {
-            await using (var cache = CreateDefault(true))
+            await using (var cache = CreateDefault(true, password))
             {
                 await cache.SetAsync("foo", DefaultEncoding.GetBytes("hello"));
                 var bytes = await cache.GetAsync("foo");
