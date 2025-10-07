@@ -40,9 +40,10 @@ namespace NeoSmart.Caching.Sqlite
         }
 
         /// <summary>
-        /// 
+        /// Use this to specify a password for the SqliteConnection that is to be created.
+        /// If no <see cref="SqliteEncryptionPassword"/> is set, the connectionStringBuilder will not use the "Password" option.
         /// </summary>
-        public string SqliteEncryptionPassword { get; set; } = "";
+        public string? SqliteEncryptionPassword { get; set; } = null;
 
         /// <summary>
         /// Specifies how often expired items are removed in the background.
@@ -60,6 +61,8 @@ namespace NeoSmart.Caching.Sqlite
                     Mode = MemoryOnly ? SqliteOpenMode.Memory : SqliteOpenMode.ReadWriteCreate,
                     Cache = SqliteCacheMode.Shared
                 };
+
+                // only set the password option if the user actually set a Password
                 if (string.IsNullOrEmpty(SqliteEncryptionPassword))
                 {
                     sb.Password = SqliteEncryptionPassword;
