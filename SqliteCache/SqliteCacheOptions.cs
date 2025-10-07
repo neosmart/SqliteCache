@@ -42,6 +42,9 @@ namespace NeoSmart.Caching.Sqlite
         /// <summary>
         /// Use this to specify a password for the SqliteConnection that is to be created.
         /// If no <see cref="SqliteEncryptionPassword"/> is set, the connectionStringBuilder will not use the "Password" option.
+        ///
+        /// CAREFUL! this option will break your SqliteConnection if the sqliteProvider that you are using does not support encryption.
+        /// You will have to use e.g. (SQLitePCLRaw.provider.sqlcipher) instead of (SQLitePCLRaw.provider.e_sqlite3)
         /// </summary>
         public string? SqliteEncryptionPassword { get; set; } = null;
 
