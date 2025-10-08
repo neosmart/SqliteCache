@@ -66,7 +66,7 @@ namespace NeoSmart.Caching.Sqlite
                 };
 
                 // only set the password option if the user actually set a Password
-                if (string.IsNullOrEmpty(SqliteEncryptionPassword))
+                if (!string.IsNullOrEmpty(SqliteEncryptionPassword))
                 {
                     sb.Password = SqliteEncryptionPassword;
                 }
