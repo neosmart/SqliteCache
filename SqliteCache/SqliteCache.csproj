@@ -64,6 +64,10 @@ Version 3.1:
 	</PackageReleaseNotes>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\README.md">
       <Pack>True</Pack>
