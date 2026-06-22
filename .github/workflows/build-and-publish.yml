@@ -31,7 +31,13 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     
     - name: Test
-      run: dotnet test --configuration Release --no-build --verbosity normal
+      run: dotnet test --configuration Release --no-build --verbosity normal --results-directory ${{ github.workspace }}/test-results/:/test-results --logger trx
+
+    - name: Publish test results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      with:
+          files: |
+            ${{ github.workspace }}/test-results/**/*.trx
     
     - name: Pack NuGet package
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
