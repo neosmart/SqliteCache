@@ -38,13 +38,34 @@ jobs:
       with:
           files: |
             ${{ github.workspace }}/test-results/**/*.trx
+
+    - name: Get version
+      if: github.event_name == 'push' && (github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master')
+      id: get_version
+      uses: paulhatch/semantic-version@v6.0.1
+      with:
+        tag_prefix: "v"
+        version_format: "${major}.${minor}.${patch}-prerelease-${{ env.BRANCH_NAME }}-${increment}"
+        major_pattern: "(MAJOR)"
+        minor_pattern: "(MINOR)"
+        search_commit_body: true
+
+    - name: Get version
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      id: get_version
+      uses: paulhatch/semantic-version@v6.0.1
+      with:
+        tag_prefix: "v"
+        version_format: "${major}.${minor}.${patch}"
+        major_pattern: "(MAJOR)"
+        minor_pattern: "(MINOR)"
+        search_commit_body: true
     
     - name: Pack NuGet package
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      run: dotnet pack --configuration Release --no-build --output ./artifacts
+      run: dotnet pack SqliteCache/SqliteCache.csproj -c Release -p:DebugSymbols=true -p:DebugType=embedded -p:Version=${{ steps.get_version.outputs.version }}
     
     - name: Publish to GitHub Packages
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       run: |
         dotnet nuget push ./artifacts/*.nupkg \
           --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
