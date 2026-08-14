@@ -26,7 +26,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
             {
                 System.IO.File.Delete(Configuration.CachePath);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogWarning(ex, "Unable to delete db file at {DbPath}", Configuration.CachePath);
             }

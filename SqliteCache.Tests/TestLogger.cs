@@ -7,7 +7,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
     {
         public readonly struct VoidScope : IDisposable
         {
-            public void Dispose() {}
+            public void Dispose() { }
         }
 
         public IDisposable BeginScope<TState>(TState state)

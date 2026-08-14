@@ -197,24 +197,22 @@ namespace NeoSmart.Caching.Sqlite
             logger.LogInformation("Initializing db cache: {ConnectionString}",
                 config.ConnectionString);
 
-            using (var transaction = db.BeginTransaction())
+            using var transaction = db.BeginTransaction();
+            using (var cmd = new DbCommand(Resources.TableInitCommand, db))
             {
-                using (var cmd = new DbCommand(Resources.TableInitCommand, db))
-                {
-                    cmd.Transaction = transaction;
-                    cmd.ExecuteNonQuery();
-                }
-                using (var cmd = new DbCommand(
-                    $"INSERT INTO meta (key, value) " +
-                    $"VALUES " +
-                    $"('version', {SchemaVersion}), " +
-                    $"('created', {DateTimeOffset.UtcNow.Ticks})", db))
-                {
-                    cmd.Transaction = transaction;
-                    cmd.ExecuteNonQuery();
-                }
-                transaction.Commit();
+                cmd.Transaction = transaction;
+                cmd.ExecuteNonQuery();
             }
+            using (var cmd = new DbCommand(
+                $"INSERT INTO meta (key, value) " +
+                $"VALUES " +
+                $"('version', {SchemaVersion}), " +
+                $"('created', {DateTimeOffset.UtcNow.Ticks})", db))
+            {
+                cmd.Transaction = transaction;
+                cmd.ExecuteNonQuery();
+            }
+            transaction.Commit();
         }
 
         // Some day, Microsoft will deign it useful to add async service initializers and we can
@@ -382,7 +380,7 @@ namespace NeoSmart.Caching.Sqlite
             });
         }
 
-        private void CreateForSet(DbCommand cmd, string key, byte[] value, DistributedCacheEntryOptions options)
+        private static void CreateForSet(DbCommand cmd, string key, byte[] value, DistributedCacheEntryOptions options)
         {
             cmd.Parameters.AddWithValue("@key", key);
             cmd.Parameters.AddWithValue("@value", value);
@@ -390,9 +388,9 @@ namespace NeoSmart.Caching.Sqlite
             AddExpirationParameters(cmd, options);
         }
 
-        private void CreateBulkInsert(DbCommand cmd, IEnumerable<KeyValuePair<string, byte[]>> keyValues, DistributedCacheEntryOptions options)
+        private static void CreateBulkInsert(DbCommand cmd, IEnumerable<KeyValuePair<string, byte[]>> keyValues, DistributedCacheEntryOptions options)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine(DbCommands.Commands[(int)Operation.BulkInsert]);
             int i = 0;
             foreach (var pair in keyValues)
@@ -403,7 +401,7 @@ namespace NeoSmart.Caching.Sqlite
                 i++;
             }
             sb.Remove(sb.Length - 1, 1);
-            sb.Append(";");
+            sb.Append(';');
 
             AddExpirationParameters(cmd, options);
 
@@ -430,7 +428,7 @@ namespace NeoSmart.Caching.Sqlite
             });
         }
 
-        private void AddExpirationParameters(DbCommand cmd, DistributedCacheEntryOptions options)
+        private static void AddExpirationParameters(DbCommand cmd, DistributedCacheEntryOptions options)
         {
             DateTimeOffset? expiry = null;
             TimeSpan? renewal = null;

@@ -8,7 +8,7 @@ namespace NeoSmart.Caching.Sqlite.Tests
     [TestClass]
     public class ClearCacheTests : IDisposable
     {
-        private readonly SqliteCacheOptions Configuration = new SqliteCacheOptions()
+        private readonly SqliteCacheOptions Configuration = new()
         {
             MemoryOnly = false,
             CachePath = $"ClearCache-{Guid.NewGuid()}.db",
@@ -16,15 +16,24 @@ namespace NeoSmart.Caching.Sqlite.Tests
 
         public void Dispose()
         {
-            var logger = new TestLogger<ClearCacheTests>();
-            logger.LogInformation("Delete db at path {DbPath}", Configuration.CachePath);
-            try
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                System.IO.File.Delete(Configuration.CachePath);
-            }
-            catch(Exception ex)
-            {
-                logger.LogWarning(ex, "Unable to delete db file at {DbPath}", Configuration.CachePath);
+                var logger = new TestLogger<ClearCacheTests>();
+                logger.LogInformation("Delete db at path {DbPath}", Configuration.CachePath);
+                try
+                {
+                    System.IO.File.Delete(Configuration.CachePath);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(ex, "Unable to delete db file at {DbPath}", Configuration.CachePath);
+                }
             }
         }
 
@@ -40,24 +49,22 @@ namespace NeoSmart.Caching.Sqlite.Tests
         [TestMethod]
         public void ItemsRemovedAfterClear()
         {
-            using (var cache = CreateDefault(true))
-            {
-                var expiry = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddDays(1));
-                cache.SetString("one", "foo", expiry);
-                cache.SetString("two", "bar", expiry);
+            using var cache = CreateDefault(true);
+            var expiry = new DistributedCacheEntryOptions().SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddDays(1));
+            cache.SetString("one", "foo", expiry);
+            cache.SetString("two", "bar", expiry);
 
-                Assert.AreEqual("foo", cache.GetString("one"));
-                Assert.AreEqual("bar", cache.GetString("two"));
+            Assert.AreEqual("foo", cache.GetString("one"));
+            Assert.AreEqual("bar", cache.GetString("two"));
 
-                // Test and check
-                cache.Clear();
+            // Test and check
+            cache.Clear();
 
-                var item1 = cache.Get("one");
-                Assert.IsNull(item1);
+            var item1 = cache.Get("one");
+            Assert.IsNull(item1);
 
-                var item2 = cache.Get("two");
-                Assert.IsNull(item2);
-            }
+            var item2 = cache.Get("two");
+            Assert.IsNull(item2);
         }
     }
 }
