@@ -46,8 +46,8 @@ namespace NeoSmart.Caching.Sqlite.Tests
                 cache.SetString("one", "foo", expiry);
                 cache.SetString("two", "bar", expiry);
 
-                Assert.AreEqual(cache.GetString("one"), "foo");
-                Assert.AreEqual(cache.GetString("two"), "bar");
+                Assert.AreEqual("foo", cache.GetString("one"));
+                Assert.AreEqual("bar", cache.GetString("two"));
 
                 // Test and check
                 cache.Clear();
