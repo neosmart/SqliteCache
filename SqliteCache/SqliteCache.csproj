@@ -12,7 +12,7 @@
     <Company>NeoSmart Technologies</Company>
     <Product>SqliteCache</Product>
     <Description>An SQLite-backed IDistributedCache cache implementation for ASP.NET Core. Fast, transparent, persistent caching.</Description>
-    <Copyright>NeoSmart Technologies 2019-2025</Copyright>
+    <Copyright>NeoSmart Technologies 2019-2026</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://neosmart.net/blog/2019/sqlite-cache-for-asp-net-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/neosmart/AspSqliteCache</RepositoryUrl>
